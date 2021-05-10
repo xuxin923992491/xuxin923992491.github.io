@@ -1,0 +1,413 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hexo | Hexo</title><meta name="author" content="xuxin923992491"><meta name="copyright" content="xuxin923992491"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="计算机网络复习OSI体系：应用层，表示层，会话层，运输层，网络层，数据链路层，物理层 TCP&#x2F;IP体系：应用层，运输层，网际层，网络接口层 五层协议体系：应用层，运输层，网络层，数据链路层，物理层  应用层：应用进程间交互完成网络应用，相当于由客户这边发起请求的载体，常用协议如下：  域名系统DNS：将目的ip解析为域名 HTTP协议：请求页面的这么一种协议   运输层：主机之间的进程通信，用来进">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="https://xuxin923992491.github.io/2021/05/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%A4%8D%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="计算机网络复习OSI体系：应用层，表示层，会话层，运输层，网络层，数据链路层，物理层 TCP&#x2F;IP体系：应用层，运输层，网际层，网络接口层 五层协议体系：应用层，运输层，网络层，数据链路层，物理层  应用层：应用进程间交互完成网络应用，相当于由客户这边发起请求的载体，常用协议如下：  域名系统DNS：将目的ip解析为域名 HTTP协议：请求页面的这么一种协议   运输层：主机之间的进程通信，用来进">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-05-10T11:49:12.945Z">
+<meta property="article:modified_time" content="2021-03-30T12:47:40.000Z">
+<meta property="article:author" content="xuxin923992491">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://xuxin923992491.github.io/2021/05/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%A4%8D%E4%B9%A0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-03-30 20:47:40'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/null" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">3</div></a></div></div></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Hexo</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">No title</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-05-10T11:49:12.945Z" title="Created 2021-05-10 19:49:12">2021-05-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-03-30T12:47:40.000Z" title="Updated 2021-03-30 20:47:40">2021-03-30</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="计算机网络复习"><a href="#计算机网络复习" class="headerlink" title="计算机网络复习"></a>计算机网络复习</h2><p>OSI体系：应用层，表示层，会话层，运输层，网络层，数据链路层，物理层</p>
+<p>TCP/IP体系：应用层，运输层，网际层，网络接口层</p>
+<p>五层协议体系：应用层，运输层，网络层，数据链路层，物理层</p>
+<ul>
+<li><p>应用层：应用进程间交互完成网络应用，相当于由客户这边发起请求的载体，常用协议如下：</p>
+<ul>
+<li>域名系统DNS：将目的ip解析为域名</li>
+<li>HTTP协议：请求页面的这么一种协议</li>
+</ul>
+</li>
+<li><p>运输层：主机之间的进程通信，用来进行数据传输服务，常用传输协议：</p>
+<ul>
+<li>TCP：面向连接，可靠传输</li>
+<li>UDP：无连接，不保证可靠性</li>
+</ul>
+</li>
+<li><p>网络层：两个计算机节点之间的传递中间需要跨过很多过程，中间就有网络部分，网络层就是完成中间各个节点的交互，使得数据能够及时传送</p>
+<ul>
+<li>IP协议</li>
+</ul>
+</li>
+<li><p>数据链路层：整个传输过程中是在一段一段链路上传输的，如何找准链路，是这一层保证的</p>
+</li>
+<li><p>物理层：传输介质和物理设备上的传输</p>
+</li>
+</ul>
+<p>TCP三次握手过程（A为客户端，B为服务端）：</p>
+<ul>
+<li>B处于LISTEN状态，等待客户端请求</li>
+<li>A向B发请求报文，这时SYN=1，生成一个初始序列号seq=x</li>
+<li>B收到请求报文，同意建立连接，向A发送连接确认报文（ACK=1，ack=x+1），并告诉A我确实收到了请求（SYN=1，seq=y）</li>
+<li>A收到了B的确认之后，还要向B做最后的确认（ACK=1,ack=y+1），表示既然你同意了，那我就要发啦(seq=x+1)</li>
+<li>最后B收到A的确认后建立连接</li>
+</ul>
+<p>为什么三次握手：目的就是双方要确认自己与对方的接收与发送是正常的</p>
+<ul>
+<li>第一次握手：A什么也不能确认，B确认了对方发送正常，自己接收正常</li>
+<li>第二次握手：A确认了自己发送、接收正常，确认了对方发送、接收正常</li>
+<li>第三次握手：B确认了自己发送正常，对方接收正常</li>
+</ul>
+<p>SYN和ACK的区别：SYN是表示要发送方要发送信息，ACK表示接收方收到了信息，相当于有了SYN，才开启发送信息的模式。</p>
+<p>断开连接的四次挥手：</p>
+<ul>
+<li>A想断开，则发送释放报文，FIN=1,seq=u</li>
+<li>B收到了A想断开，B先告诉A我收到了，此时发送确认信号ACK=1,seq=v,ack=u+1，这时候TCP处于半关闭状态，这时候只能B向A发送数据</li>
+<li>这时候需要把中途没发完的数据给发完，等发完之后，B告诉A，不需要连接了，此时则是B向A发送断开请求，FIN=1,seq=v+1</li>
+<li>A此时收到B请求之后发出确认信息，ACK=1,seq=u+1,ack=v+1+1，此时进入2MSL（最大报文存活时间）的等待，然后释放连接</li>
+<li>B收到A的确认之后就真正的释放连接了</li>
+</ul>
+<p>四次挥手的原因：在客户端发了断开连接的请求的时候，此时的服务器出入CLOSE-WAIT状态，这时候得保证没发完的数据发完，发完了才能继续让FIN=1，服务器也结束连接</p>
+<p>TIME_WAIT为2MSL是怎么回事：确保确认的报文能够顺利的到达服务器，没到达就再发一次，另外也是保证之前连接过程中产生的报文都从网络中消失，防止有残留，避免影响下一个连接</p>
+<p>TCP和UDP协议的区别：</p>
+<ul>
+<li>前者面向连接，后者无连接（最核心的区别）：<ul>
+<li>UDP：不需要建立连接，远程主机收到UDP报文后不需要给出任何确认，UDP适合即时通信，传输速率高，比如：QQ语音，QQ视频等</li>
+<li>TCP需要面向连接，包括三次握手和四次挥手，正因为如此，所以可靠，当然会增加开销</li>
+</ul>
+</li>
+<li>前者传输可靠，后者不可靠</li>
+<li>前者以字节流的形式传输，后者为数据报文段</li>
+<li>前者传输效率慢，后者快</li>
+<li>前者所需资源多，后者少</li>
+<li>前者适合通讯数据可靠的场景，如文件、邮件传输等，后者要求通信速度高，如域名转换</li>
+</ul>
+<p>TCP协议如何保证可靠传输：</p>
+<ul>
+<li>应用数据被切分成适合的数据块</li>
+<li>数据包进行了排序，有序传输数据</li>
+<li>会进行校验和操作，目的是检测传输过程中的变化，如果有差错，TCP将丢弃报文段和不确认收到此报文段</li>
+<li>接收端丢弃重复数据</li>
+<li>流量控制：每一方都有固定的缓冲空间，当接收方来不及处理发送方的数据，能提示发送方降低发送速率，防止包丢失，这是通过TCP滑动窗口协议实现的流量控制</li>
+<li>拥塞控制：网络拥塞时，能减少数据的发送</li>
+<li>ARQ（自动重传请求）协议：每发完一组，就停下来等待对方确认，对方确认后再发下一组</li>
+<li>超时重传：TCP发出一个字段后，会启动定时器，等待目的端确认，如果不能及时确认，将重新发送这个报文段</li>
+</ul>
+<p>ARQ协议：包括停止等待ARQ协议和连续的ARQ协议</p>
+<ul>
+<li><p>停止等待ARQ协议：发完一组就停下，等待对方确认（回复ACK），如果过了一段时间（超时）了还没收到说明没发送成功就重新发；如果接收方接收到了重复组，就丢弃，并告诉发送方（回复确认ACK）</p>
+<ul>
+<li>优点：简单</li>
+<li>缺点信道利用率低，等待时间长</li>
+</ul>
+</li>
+<li><p>连续ARQ协议：提高信道利用率，发送方维持一个发送窗口，窗口内的多组可以连续发送出去，不需要对方确认，接收方一般累积确认，按序到达的最后一个发送确认，表示在这之前的都已经收到了</p>
+<ul>
+<li>优点：信道利用率高，容易实现，即使确认丢失，也不必重传</li>
+<li>缺点：只能知道收到了哪些，不知道哪些丢了</li>
+</ul>
+</li>
+</ul>
+<p>拥塞控制：发送方定义一个拥塞窗口，发送窗口大小取拥塞窗口和接收方接受窗口中较小的一个，拥塞控制采用四种算法，分别如下：（除了拥塞窗口外，在网络层路由器也可以采用适当的分组丢弃策略，减少网络拥塞发生）</p>
+<ul>
+<li>慢开始：cwnd初始值为1，每一个传播轮次，cwnd加倍，发送窗口自然而然也是逐渐增大</li>
+<li>拥塞避免：当上面cwnd逐渐增大了之后，拥塞的可能性变高了，当达到了慢开始门限ssthresh，此时进入拥塞避免，不再是成倍增加了，而是每个轮次+1</li>
+<li>快重传与快恢复：如果没有FRR，如果数据包丢失了，那么传输暂停，有了FRR，如果开始接受到了不按顺序发送的数据包，此时就要向发送方确认，如果发送方收到三个确认，则会认定数据段丢失，此时立即重传丢失的数据段而不会被暂停，这时候慢开始门限被降低，除以2了，此时cwnd从新门限开始，此时为快恢复，注意，当多个数据段丢失，不能很有效的工作</li>
+</ul>
+<p>浏览器中输入url地址显示页面的过程：</p>
+<ul>
+<li>浏览器根据域名查找ip（DNS获取域名ip）</li>
+<li>浏览器向ip处的web服务器发送HTTP请求（cookies会随着请求发送过去）</li>
+<li>服务器处理请求</li>
+<li>服务器返回一个HTTP报文</li>
+<li>浏览器解析渲染显示相应页面</li>
+</ul>
+<p>上述过程使用到的协议：</p>
+<ul>
+<li>DNS获取对应ip</li>
+<li>IP：数据在网络层中使用IP协议</li>
+<li>DPSF：IP数据包在路由器之间，路由选择使用OPSF协议</li>
+<li>ARP：路由器和服务器通信时，需要将ip转为MAC地址，使用ARP协议</li>
+<li>HTTP协议：TCP建立完成后，使用HTTP协议访问页面</li>
+</ul>
+<p>状态码：</p>
+<ul>
+<li><p>1XX：信息性状态码，接收的请求正在处理</p>
+<ul>
+<li>100 Continue:目前为止很正常，可以正常发请求</li>
+</ul>
+</li>
+<li><p>2XX：成功状态码，请求正常处理完毕</p>
+<ul>
+<li>200 OK</li>
+<li>204 No Content:请求已经成功处理，返回响应报文不包含实体的主体，也就是不返回数据</li>
+<li>206 Partial Content 进行了范围请求</li>
+</ul>
+</li>
+<li><p>3XX：重定向</p>
+<ul>
+<li>301 永久性重定向</li>
+<li>302 临时重定向</li>
+<li>303 和302一样，只不过必须是GET方法获取资源，虽然HTTP协议规定不允许把POST改成GET，但是大多数浏览器会改</li>
+<li>304 不满足报文首部条件</li>
+<li>307 临时重定向，与302类似，但是POST不会被改成GET</li>
+</ul>
+</li>
+<li><p>4XX：客户端错误</p>
+<ul>
+<li>400 请求报文存在语法问题</li>
+<li>401 请求需要认证</li>
+<li>403 请求被拒绝</li>
+<li>404 找不到</li>
+</ul>
+</li>
+<li><p>5XX：服务器错误</p>
+<ul>
+<li>500 服务器正在执行的时候发生错误</li>
+<li>503 服务器超载或停机维护了，现在无法处理请求</li>
+</ul>
+</li>
+</ul>
+<p>各种协议与HTTP协议之间的关系：</p>
+<ul>
+<li>客户端想要浏览<a target="_blank" rel="noopener" href="http://www.baidu.com,那么就要通过dns查到对应的ip地址/">http://www.baidu.com，那么就要通过DNS查到对应的ip地址</a></li>
+<li>这其中，HTTP协议的职责就是向目标Web服务器生成HTTP请求报文，也就是向服务器要页面</li>
+<li>既然生成了请求，那么就得吧请求传出去，在这期间，TCP协议开始负责，为了方便通信将HTTP请求报文分割成报文段，排好序，每个报文段可靠传给对方</li>
+<li>传的过程中肯定进行网络间的传递，这里IP协议就要负责，找好位置，知道怎么中转，换句话说，在众多的网络中知道走哪条路径能够到达目的地网络</li>
+<li>到了对面的网络之后服务器端那边TCP协议要负责啦，把散装的报文段给按照顺序重组起来，形成之前的请求</li>
+<li>服务器这边的HTTP协议开始负责接下来的工作，就是Web服务器对HTTP请求进行处理，让服务器知道想要的是目的ip的某某资源呀，处理完之后再按照原来的路径同理回传响应</li>
+</ul>
+<p>关于HTTP的长连接和短连接：</p>
+<ul>
+<li>HTTP1.0默认使用短连接，意思是客户端和服务器每进行一次HTTP操作，就建立一次连接，任务结束就中断连接</li>
+<li>HTTP1.1开始，默认使用长连接，长期保持连接性，响应头加入Connection:keep-alive,虽然说长连接，但也不是永久保持，她有一个保持时间，实现长连接需要客户端和服务端都支持长连接</li>
+<li>HTTP协议的长连接和短连接，实质上是TCP协议的长连接和短连接</li>
+</ul>
+<p>HTTP如何保存用户状态</p>
+<ul>
+<li>HTTP本身是不保存状态的，也就是说不保存请求和响应之间的通信状态</li>
+<li>使用Session可以保存，在服务端记录用户状态</li>
+<li>购物车就是利用了Session，添加商品到购物车，在服务端处理请求的时候，会创建Session标识请求用户并跟踪，这样再添加商品到购物车就知道是哪个用户添加的了</li>
+<li>服务器端保存Session方法很多，最常用的是内存和数据库（包括redis），Session如何实现跟踪？通常在Cookie中附加一个Session ID来跟踪</li>
+<li>Cookie被禁用怎么办，通常将Session ID直接赋在URL路径后面</li>
+</ul>
+<p>HTTP1.0和HTTP1.1的区别：</p>
+<ul>
+<li>前者默认短连接，后者默认长连接，长连接又分为非流水线方式和流水线方式，前者是客户端收到响应后才能发送下一个请求，而后者收到响应之前就能发送下一个请求了</li>
+<li>后者新增了24个错误状态响应码</li>
+<li>后者引入了更多的缓存策略</li>
+<li>前者存在带宽浪费现象，比如客户只需要一部分，但是只能传全部，不支持断点续传功能，后者请求头引入了range，允许只请求资源的某个部分，对带宽和连接充分的利用了</li>
+</ul>
+<p>URI和URL的区别：</p>
+<ul>
+<li>前者全称叫统一资源标识符：可以唯一标识一个资源</li>
+<li>后者全称叫统一资源定位符：提供资源的路径的，是特殊的URI</li>
+<li>总的来说，前者像身份证号，后者像家庭地址</li>
+</ul>
+<p>HTTP和HTTPS的区别：</p>
+<ul>
+<li>前者默认端口80，后者默认端口443</li>
+<li>前者传输内容都是明文，后者是运行在SSL/TLS之上的，传输内容加密，采用的是对称加密保证通信效率，秘钥用的服务器方的证书进行了非对称加密，保证安全性，也就说HTTPS采用了混合加密的方式<ul>
+<li>对称秘钥加密：加密解密同一秘钥<ul>
+<li>优点：运算速度快</li>
+<li>缺点：无法安全传输</li>
+</ul>
+</li>
+<li>非对称秘钥加密：又称为公开秘钥加密，也就是加密解密不同秘钥：发送方收到了接收方的公开秘钥，使用公开秘钥加密，到了接受方使用私有秘钥解密<ul>
+<li>优点：更安全的公开秘钥传输</li>
+<li>缺点：运算速度慢</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>前者安全性没有后者高</li>
+<li>后者比前者耗费更多服务器资源</li>
+</ul>
+<p>HTTP的无状态：客户端和服务端每次的来往都不会被记录，客户端访问过服务器端，但是服务器端不知道，这就是不记录来往的状态</p>
+<p>Cookie是如何工作的：</p>
+<ul>
+<li>浏览器第一次访问服务器时，服务器不知道访问者的身份，所以在服务器创建一个独特的身份标识，也就是Session ID，放入到Cookie字段里，随着响应报文发给浏览器</li>
+<li>浏览器收到了Cookie之后知道了服务器给了身份标识，保存起来，下次请求的时候会自动将这个Cookie字段发送给服务器</li>
+<li>服务器收到请求报文之后，发现Cookie字段中有Session ID，服务器根据这个Session ID就能够提供相应的操作，就相当于认识这个客户端，知道它都干了些什么</li>
+</ul>
+<p>电商的个性化推荐是怎么回事：其实就是通过Cookie和Session，服务器就知道客户端都做过什么，然后从数据库中进行分析，把分析结果返回到页面</p>
+<p>有了Cookie为什么还要Session？</p>
+<ul>
+<li>Cookie正常里面可能不只是存储Session ID的，如果还放了其他的重要信息，都在Cookie字段当中，万一传输过程中被拦截了，那么就会造成信息泄露，很不安全</li>
+<li>比如说访问到了一个钓鱼网站，他拿到了Cookie，那么所有信息就被钓走了</li>
+<li>此时我们将重要信息存储在服务器端，保存在服务器的Session中，Cookie只留着Session ID，即使被钓鱼了，也就顶多拿走一串数字，什么用都没有</li>
+<li>注意，Cookie也不是永久的，也会过期的</li>
+</ul>
+<p>Cookie和Session也存在的问题：</p>
+<ul>
+<li>访问服务器的人多了，服务器存的Session也会激增，服务器开销增大，严重限制了服务器</li>
+<li>此时得使用服务器集群，但是有涉及到其他服务器可能没有Session ID，这里又要进行Session复制，非常耗时</li>
+<li>此时解决办法是用缓存来记录所有的Session ID，所有的服务器访问缓存即可</li>
+<li>但是容易出现单点故障，当系统的缓存出了问题，所有服务器都失效</li>
+<li>此时用缓存集群可以解决，但是为了一个Session ID耗费这么多资源有些浪费</li>
+<li>此外还存在另外一个问题，就是CSRF攻击，也就是别人盗用了Cookie想服务端发送了请求，结果被恶意操作，造成严重后果</li>
+<li>关键点是验证，核心就是服务器如何知道客户端的身份</li>
+<li>现在更多可以使用Token来解决上述压力问题（不能解决CSS攻击，也叫XSS攻击）</li>
+</ul>
+<p>Cookie和Session的区别：</p>
+<ul>
+<li>前者可以存储在浏览器或本地，后者只能存储在服务器</li>
+<li>后者比前者更具有安全性</li>
+<li>后者占用服务器性能，容易造成服务器压力过大</li>
+<li>前者只能存字符串</li>
+</ul>
+<p>什么是JWT：</p>
+<ul>
+<li><p>JWT本质上式带签名的JSON格式的数据，由于带有签名，可以验证真实身份</p>
+</li>
+<li><p>三部分组成：</p>
+<ul>
+<li>头：签名算法，Token类型</li>
+<li>负载：传递的数据</li>
+<li>签名：相当于验证的</li>
+</ul>
+</li>
+<li><p>JWT的过程：</p>
+<ul>
+<li>用户想服务器发送数据</li>
+<li>服务器根据token组成生成一个token返回到客户端，保存到客户端，而不再是在服务器上保存登陆信息了（Session和Token核心区别）</li>
+<li>用户以后每次向后端发送请求都带上token，服务端会解密签名知道了是谁</li>
+<li>客户端将Token保存在Cookie或者localStorage里面</li>
+</ul>
+</li>
+</ul>
+<p>HTTP1.x和HTTP2.x的区别：</p>
+<ul>
+<li>前者使用文本（字符串传送），后者使用二进制（二进制分帧层的形式）传送</li>
+<li>后者支持多路复用，因为有流ID，可以用流ID来标示哪个流从而定位到哪个http请求</li>
+<li>前者首部带有大量信息，即使重复也要重复发送，后者支持头部压缩，客户端和服务端双方都维护一张头信息表，所有字段都记录在这张表中，这样后面每次传输只需要传输表里面的索引ID就行，通过索引id查询表头的值</li>
+<li>后者支持服务器推送，即在未经客户端许可的情况下，主动向客户端推送内容</li>
+</ul>
+<p>HTTPS的加密过程：</p>
+<ul>
+<li>A访问B，B给了A一个被认证过的公钥</li>
+<li>此时A认出了这个公钥，此时A生成了一个随机密钥，使用B的公钥进行了加密</li>
+<li>B收回了公钥进行了解密，知道了双方进行连接的那个随机密钥</li>
+<li>这时的随机密钥就是只有双方才能互相解锁的，此时是对称加密</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">xuxin923992491</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://xuxin923992491.github.io/2021/05/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%A4%8D%E4%B9%A0/">https://xuxin923992491.github.io/2021/05/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%A4%8D%E4%B9%A0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/05/03/JVM%E5%A4%8D%E4%B9%A0/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">First blog(JVM Review)</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/null" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">xuxin923992491</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">3</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%A4%8D%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">计算机网络复习</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/05/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%A4%8D%E4%B9%A0/" title="No title"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="No title"/></a><div class="content"><a class="title" href="/2021/05/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%A4%8D%E4%B9%A0/" title="No title">No title</a><time datetime="2021-05-10T11:49:12.945Z" title="Created 2021-05-10 19:49:12">2021-05-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/03/JVM%E5%A4%8D%E4%B9%A0/" title="First blog(JVM Review)"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="First blog(JVM Review)"/></a><div class="content"><a class="title" href="/2021/05/03/JVM%E5%A4%8D%E4%B9%A0/" title="First blog(JVM Review)">First blog(JVM Review)</a><time datetime="2021-05-03T02:42:40.369Z" title="Created 2021-05-03 10:42:40">2021-05-03</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2021/05/02/hello-world/" title="Hello World">Hello World</a><time datetime="2021-05-02T09:17:00.137Z" title="Created 2021-05-02 17:17:00">2021-05-02</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By xuxin923992491</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
