@@ -1,0 +1,227 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Docker学习总结 | Hexo</title><meta name="author" content="xuxin923992491"><meta name="copyright" content="xuxin923992491"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Docker学习总结比较 Docker 和传统虚拟化方式的不同之处： 传统虚拟机技术是虚拟出一套硬件后，在其上运行一个完整操作系统，在该系统上再运行所需应用进程； docker容器内的应用进程直接运行于宿主的内核，容器内没有自己的内核，而且也没有进行硬件虚拟，因此容器要比传统虚拟机更为轻便。 每个容器之间互相隔离，每个容器有自己的文件系统 ，容器之间进程不会相互影响，能区分计算资源。  Docke">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker学习总结">
+<meta property="og:url" content="https://xuxin923992491.github.io/2021/05/23/Docker%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Docker学习总结比较 Docker 和传统虚拟化方式的不同之处： 传统虚拟机技术是虚拟出一套硬件后，在其上运行一个完整操作系统，在该系统上再运行所需应用进程； docker容器内的应用进程直接运行于宿主的内核，容器内没有自己的内核，而且也没有进行硬件虚拟，因此容器要比传统虚拟机更为轻便。 每个容器之间互相隔离，每个容器有自己的文件系统 ，容器之间进程不会相互影响，能区分计算资源。  Docke">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-05-23T03:09:47.885Z">
+<meta property="article:modified_time" content="2021-05-23T03:10:55.977Z">
+<meta property="article:author" content="xuxin923992491">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://xuxin923992491.github.io/2021/05/23/Docker%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-05-23 11:10:55'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/null" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">4</div></a></div></div></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Hexo</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Docker学习总结</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-05-23T03:09:47.885Z" title="Created 2021-05-23 11:09:47">2021-05-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-05-23T03:10:55.977Z" title="Updated 2021-05-23 11:10:55">2021-05-23</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="Docker学习总结"><a href="#Docker学习总结" class="headerlink" title="Docker学习总结"></a>Docker学习总结</h2><h4 id="比较-Docker-和传统虚拟化方式的不同之处："><a href="#比较-Docker-和传统虚拟化方式的不同之处：" class="headerlink" title="比较 Docker 和传统虚拟化方式的不同之处："></a>比较 Docker 和传统虚拟化方式的不同之处：</h4><ul>
+<li>传统虚拟机技术是虚拟出一套硬件后，在其上运行一个完整操作系统，在该系统上再运行所需应用进程；</li>
+<li>docker容器内的应用进程直接运行于宿主的内核，容器内没有自己的内核，而且也没有进行硬件虚拟，因此容器要比传统虚拟机更为轻便。</li>
+<li>每个容器之间互相隔离，每个容器有自己的文件系统 ，容器之间进程不会相互影响，能区分计算资源。</li>
+</ul>
+<h4 id="Docker容器的好处：一次构建，随处运行"><a href="#Docker容器的好处：一次构建，随处运行" class="headerlink" title="Docker容器的好处：一次构建，随处运行"></a>Docker容器的好处：一次构建，随处运行</h4><ul>
+<li>更快速的应用交付和部署：<pre><code>    传统的应用开发完成后，需要提供一堆安装程序和配置说明文档，安装部署后需根据配置文档进行繁杂的配置才能正常运行。Docker化之后只需要交付少量容器镜像文件，在正式生产环境加载镜像并运行即可，应用安装配置在镜像里已经内置好，大大节省部署配置和测试验证时间。
+</code></pre>
+</li>
+<li>更便捷的升级和扩缩容：<pre><code>    随着微服务架构和Docker的发展，大量的应用会通过微服务方式架构，应用的开发构建将变成搭乐高积木一样，每个Docker容器将变成一块“积木”，应用的升级将变得非常容易。当现有的容器不足以支撑业务处理时，可通过镜像运行新的容器进行快速扩容，使应用系统的扩容从原先的天级变成分钟级甚至秒级。
+</code></pre>
+</li>
+<li>更简单的系统运维：<pre><code>    应用容器化运行后，生产环境运行的应用可与开发、测试环境的应用高度一致，容器会将应用程序相关的环境和状态完全封装起来，不会因为底层基础架构和操作系统的不一致性给应用带来影响，产生新的BUG。当出现程序异常时，也可以通过测试环境的相同容器进行快速定位和修复。
+</code></pre>
+</li>
+<li>更高效的计算资源利用：<pre><code>    Docker是内核级虚拟化，其不像传统的虚拟化技术一样需要额外的Hypervisor支持，所以在一台物理机上可以运行很多个容器实例，可大大提升物理服务器的CPU和内存的利用率。
+</code></pre>
+</li>
+</ul>
+<h4 id="Docker使用心得："><a href="#Docker使用心得：" class="headerlink" title="Docker使用心得："></a>Docker使用心得：</h4><ul>
+<li>首先，我们在docker中进行容器的配置，也就是搭建“集装箱”，我们以一个普通的JavaWeb项目为例</li>
+<li>项目需要：centos7，tomcat，mysql，redis，就以这四项为例</li>
+<li>比方说我们现在已经将项目的代码写好了，准备部署，或者交给运营来部署，原来就是打包成war包交给运营，运营在他的电脑上运行，但是容易出现系统版本不兼容，软件版本不兼容等众多问题，此时docker的好处就来了</li>
+<li>此时我们在docker中，先拉取centos7，tomcat，mysql，redis的镜像，每个当中都生成一个容器，将项目当中的tomcat，mysql，redis的所有信息都转成和容器匹配的，或者在项目的开始的时候就直接使用docker的容器，更方便，此时的各个容器都是和项目相关的容器，都是根据项目进行配置的，包括数据，包等所有信息</li>
+<li>此时再docker容器上能够跑通项目之后，我们将每个容器通过commit生成镜像，然后可以推送到远端仓库，这样运维就可以在他那边这些镜像拉取下来，拉取下来的镜像就是我们的项目的所有信息，运维只需要将镜像生成容器来运行即可，这时候就不存在所谓的不兼容等问题</li>
+<li>每个容器都相当于一个微型的linux系统，因此使用各个容器就和linux差不多</li>
+</ul>
+<h4 id="Docker的流程："><a href="#Docker的流程：" class="headerlink" title="Docker的流程："></a>Docker的流程：</h4><ul>
+<li>使用dockerfile，然后build，编译成镜像，相当于自己写一个镜像的源码，自己编译到本地镜像库中</li>
+<li>或者直接从远端仓库拉取到本地镜像库中，docker pull</li>
+<li>此时已经拉取镜像到了本地镜像库，然后docker run生成并运行容器</li>
+<li>更新好的容器也可以再生成镜像保存到本地库中，相当于原来镜像的版本更新，docker commit</li>
+<li>此时已经提交到了本地镜像仓库</li>
+<li>当然也可以提交到阿里云或者公司库等远端库，具体需要看远端镜像库的操作（不同远端可能不同）</li>
+<li>此时运维或者其他人可以使用，拉取到他们的机器上直接运行即可，不用顾及兼容性等问题</li>
+</ul>
+<h4 id="Docker镜像原理："><a href="#Docker镜像原理：" class="headerlink" title="Docker镜像原理："></a>Docker镜像原理：</h4><ul>
+<li>对于一个镜像而言，其底层有多层的文件系统，拉取一个镜像，实则镜像里面的众多文件系统都需要被拉取下来，一层套一层，一层一层的拉取，想“花卷”一样的结构</li>
+<li>官方解释：<pre><code>    docker的镜像实际上由一层一层的文件系统组成，这种层级的文件系统UnionFS。
+    bootfs(boot file system)主要包含bootloader和kernel, bootloader主要是引导加载kernel, Linux刚启动时会加载bootfs文件系统，在Docker镜像的最底层是bootfs。这一层与我们典型的Linux/Unix系统是一样的，包含boot加载器和内核。当boot加载完成之后整个内核就都在内存中了，此时内存的使用权已由bootfs转交给内核，此时系统也会卸载bootfs。
+    rootfs (root file system) ，在bootfs之上。包含的就是典型 Linux 系统中的 /dev, /proc, /bin, /etc 等标准目录和文件。rootfs就是各种不同的操作系统发行版，比如Ubuntu，Centos等等。 
+</code></pre>
+</li>
+<li>经典问题：平时我们安装进虚拟机的CentOS都是好几个G，为什么docker这里才200M？<pre><code>    对于一个精简的OS，rootfs可以很小，只需要包括最基本的命令、工具和程序库就可以了，因为底层直接用Host的kernel，自己只需要提供 rootfs 就行了。由此可见对于不同的linux发行版, bootfs基本是一致的, rootfs会有差别, 因此不同的发行版可以公用bootfs。
+</code></pre>
+</li>
+<li>问题：为什么 Docker 镜像要采用这种分层结构？<pre><code>     最大的一个好处就是 - 共享资源
+     比如：有多个镜像都从相同的 base 镜像构建而来，那么宿主机只需在磁盘上保存一份base镜像，同时内存中也只需加载一份 base 镜像，就可以为所有容器服务了。而且镜像的每一层都可以被共享。
+</code></pre>
+</li>
+<li>特点：Docker镜像都是只读的，当容器启动时，一个新的可写层被加载到镜像的顶部。这一层通常被称作“容器层”，“容器层”之下的都都叫“镜像层”。</li>
+</ul>
+<h4 id="容器数据卷："><a href="#容器数据卷：" class="headerlink" title="容器数据卷："></a>容器数据卷：</h4><ul>
+<li>使用数据卷的目的：Docker容器产生的数据，如果不通过docker commit生成新的镜像，使得数据做为镜像的一部分保存下来，<br>那么当容器删除后，数据自然也就没有了。</li>
+<li>卷的设计目的就是数据的持久化，完全独立于容器的生存周期，因此Docker不会在容器删除时删除其挂载的数据卷</li>
+<li>数据卷其实就是相当于一个U盘的功能，开启了数据卷，宿主机和容器之间就开启了一个通道，容器当中的一个文件夹和宿主机中的一个文件夹形成映射关系，共享内容，此时容器中的内容就被同步到宿主机中，即使容器销毁，那么数据也被持久化到宿主机上</li>
+<li>数据卷可读可写，也就是是双方都在自己对应的文件夹中写内容，会同步到双方的文件夹中读取，当然也可以设置成只读模式，也就是容器只能读宿主机，不能在这个文件夹修改或者新建内容</li>
+<li>当容器重启的话，此时的容器不是关闭，而是重启，那么容器就会从数据卷中也就是从宿主机中加载回之前的数据</li>
+<li>数据卷容器：命名的容器挂载数据卷，其它容器通过挂载这个(父容器)实现数据共享，挂载数据卷的容器，称之为数据卷容器</li>
+<li>容器之间配置信息的传递，数据卷的生命周期一直持续到没有容器使用它为止，只要存在过继承关系，就可以访问容器数据卷</li>
+</ul>
+<h4 id="Dockerfile："><a href="#Dockerfile：" class="headerlink" title="Dockerfile："></a>Dockerfile：</h4><ul>
+<li><p>什么是dockerfile：Dockerfile是用来构建Docker镜像的构建文件，是由一系列命令和参数构成的脚本（不同于shell脚本，他的一个命令会生成一个容器，修改提交生成镜像，再删除这个临时的容器）。相当于一个镜像的底层源码</p>
+</li>
+<li><p>注意，每条保留字指令执行完，都会创建一个新的镜像层，并对镜像进行提交，这也是前面所说的“花卷”的结构</p>
+</li>
+<li><p>下面通过实例演示一下dockerfile的指令代码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">使用dockerfile创建一个centos镜像</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">FROM 继承自哪个centos，或者继承哪个镜像来进行的修改</span></span><br><span class="line">FROM centos </span><br><span class="line"><span class="meta">#</span><span class="bash">MAINTAINER 作者以及邮件</span></span><br><span class="line">MAINTAINER xuxin&lt;923992491@qq.com&gt;   </span><br><span class="line"><span class="meta">#</span><span class="bash">ENV MYPATH 设置环境变量，即初始环境位置</span></span><br><span class="line">ENV MYPATH /tmp   </span><br><span class="line"><span class="meta">#</span><span class="bash">WORKING 设置登录之后的落脚点，也就是初始位置</span></span><br><span class="line">WORKING $MYPATH           </span><br><span class="line"><span class="meta">#</span><span class="bash">RUN 执行命令，原本centos的不支持vim，那么我们写的镜像就让他在生成的时候就从yum下载并且装上</span></span><br><span class="line">RUN yum -y install vim            </span><br><span class="line">RUN yum -y install net-tools      </span><br><span class="line"><span class="meta">#</span><span class="bash">EXPOSE 暴露出的端口为80端口</span></span><br><span class="line">EXPOSE 80   </span><br><span class="line"><span class="meta">#</span><span class="bash">CMD 进入容器后进入到cmd窗口，默认执行哪条命令</span></span><br><span class="line">CMD /bin/bash</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">演示CMD和ENTRYPOINT的区别</span></span><br><span class="line">FROM centos</span><br><span class="line">RUN yum install -y curl</span><br><span class="line">CMD [ &quot;curl&quot;, &quot;-s&quot;, &quot;http://ip.cn&quot; ]</span><br><span class="line"><span class="meta">#</span><span class="bash">上面这个运行完之后如果想要继续执行一个-i，那么就变成了如下：</span></span><br><span class="line">FROM centos</span><br><span class="line">RUN yum install -y curl</span><br><span class="line">CMD [ -i ]</span><br><span class="line"><span class="meta">#</span><span class="bash">因为cmd会覆盖，如果想要进行类似于-i的功能扩展，那么就改为如下：</span></span><br><span class="line">FROM centos</span><br><span class="line">RUN yum install -y curl</span><br><span class="line">ENTRYPOINT [ &quot;curl&quot;, &quot;-s&quot;, &quot;http://ip.cn&quot; ]</span><br><span class="line"><span class="meta">#</span><span class="bash">此时如果再-i，就等同于</span></span><br><span class="line">FROM centos</span><br><span class="line">RUN yum install -y curl</span><br><span class="line">CMD [ &quot;curl&quot;, &quot;-s&quot;, &quot;http://ip.cn&quot; -i]</span><br><span class="line"><span class="meta">#</span><span class="bash">以上就是ENTRYPOINT的作用，也是和CMD的区别</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">FROM centos</span><br><span class="line">RUN yum install -y curl</span><br><span class="line">ENTRYPOINT [ &quot;curl&quot;, &quot;-s&quot;, &quot;https://ip.cn&quot; ]</span><br><span class="line">ONBUILD RUN echo &quot;father on build---------886&quot;</span><br><span class="line"><span class="meta">#</span><span class="bash">此处留意ONBUILD RUN的作用，现有另一个dockerfile</span></span><br><span class="line">FROM myip_father</span><br><span class="line">RUN yum install -y curl</span><br><span class="line">CMD [ &quot;curl&quot;, &quot;-s&quot;, &quot;https://ip.cn&quot; ]</span><br><span class="line"><span class="meta">#</span><span class="bash">该dockerfile的继承了前面一个，当后面这个被build之后，前面一个ONBUILD RUN 被执行，输出引号内的话</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">综合案例，使用dockerfile定义一个属于自己的tomcat镜像，同时也是对前面的指令的总结与汇总</span></span><br><span class="line"><span class="meta">#</span><span class="bash">定义自己的tomcat2021</span></span><br><span class="line"><span class="meta">#</span><span class="bash">下面是dockerfile的定义：</span></span><br><span class="line"><span class="meta">#</span><span class="bash">FROM 继承的镜像</span></span><br><span class="line">FROM centos   </span><br><span class="line"><span class="meta">#</span><span class="bash">MAINTAINER 作者信息</span></span><br><span class="line">MAINTAINER xuxin&lt;923992491@qq.com&gt;   </span><br><span class="line"><span class="meta">#</span><span class="bash">COPY 把宿主机当前上下文的c.txt拷贝到容器/usr/<span class="built_in">local</span>/路径下，并且重名为cincontainer.txt</span></span><br><span class="line">COPY c.txt /usr/local/cincontainer.txt   </span><br><span class="line"><span class="meta">#</span><span class="bash">ADD 把jdk和tomcat解压后拷贝到容器中，此时就是将tomcat和jdk添加到容器中</span></span><br><span class="line">ADD jdk-8u212-linux-x64.tar.gz /usr/local/</span><br><span class="line">ADD apache-tomcat-8.5.35.tar.gz /usr/local/  </span><br><span class="line"><span class="meta">#</span><span class="bash">RUN 运行指令，这里安装vim编辑器</span></span><br><span class="line">RUN yum -y install vim </span><br><span class="line"><span class="meta">#</span><span class="bash">ENV MYPATH 定义工作环境</span></span><br><span class="line">ENV MYPATH /usr/local   </span><br><span class="line"><span class="meta">#</span><span class="bash">WORKDIR 登录落脚点</span></span><br><span class="line">WORKDIR $MYPATH    </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">ENV 配置java与tomcat的环境变量</span></span><br><span class="line">ENV JAVA_HOME /usr/local/jdk1.8.0_212</span><br><span class="line">ENV CLASSPATH=$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span><br><span class="line">ENV CATALINA_HOME=/usr/local/apache-tomcat-8.5.35</span><br><span class="line">ENV CATALINA_BASE=/usr/local/apache-tomcat-8.5.35</span><br><span class="line">ENV PATH $PATH:$JAVA_HOME/bin:$CATALINA_HOME/lib:$CATALINA_HOME/bin</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">EXPOSE 容器运行时监听的端口</span></span><br><span class="line">EXPOSE 8080   </span><br><span class="line"><span class="meta">#</span><span class="bash"> 启动时运行tomcat</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> ENTRYPOINT [<span class="string">&quot;/usr/local/apache-tomcat-8.5.35/bin/startup.sh&quot;</span>]</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> CMD [<span class="string">&quot;/usr/local/apache-tomcat-8.5.35/bin/catalina.sh&quot;</span>,<span class="string">&quot;run&quot;</span>]</span></span><br><span class="line">CMD /usr/local/apache-tomcat-8.5.35/bin/startup.sh &amp;&amp; tail -F /usr/local/apache-tomcat-8.5.35/bin/logs/catalina.out</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="Docker实操1：docker上下载mysql镜像"><a href="#Docker实操1：docker上下载mysql镜像" class="headerlink" title="Docker实操1：docker上下载mysql镜像"></a>Docker实操1：docker上下载mysql镜像</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">查找mysql镜像</span></span><br><span class="line">docker search mysql</span><br><span class="line"><span class="meta">#</span><span class="bash">拉取下来</span></span><br><span class="line">docker pull mysql:5.7</span><br><span class="line"><span class="meta">#</span><span class="bash">在宿主机上的/mydocker中创建一个用来和容器交互的文件夹作为数据卷，路径为/mydocker/mysql5.7</span></span><br><span class="line"><span class="meta">#</span><span class="bash">将镜像生成容器运行起来</span></span><br><span class="line"><span class="meta">#</span><span class="bash">-p docker对外暴露端口与容器真实端口的映射</span></span><br><span class="line"><span class="meta">#</span><span class="bash">-v 生成容器卷，后面是宿主机和容器共享区域的映射（宿主没有的文件夹会自动新建）</span></span><br><span class="line"><span class="meta">#</span><span class="bash">-e 设置mysql的密码</span></span><br><span class="line"><span class="meta">#</span><span class="bash">-d 后台运行</span></span><br><span class="line">docker run -p 12345:3306 --name mysql -v /mydocker/mysql5.7/conf:/etc/mysql/conf.d -v /mydocker/mysql5.7/logs:/logs -v /mydocker/mysql5.7/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.7</span><br><span class="line"><span class="meta">#</span><span class="bash">此时查看进程发现mysql5.7已经正在运行了</span></span><br><span class="line"><span class="meta">#</span><span class="bash">由于上述运行时在后台，下面可以进入mysql的容器中</span></span><br><span class="line"><span class="meta">#</span><span class="bash">366f66d116c3是容器号</span></span><br><span class="line">docker exec -it 366f66d116c3 /bin/bash</span><br><span class="line"><span class="meta">#</span><span class="bash">进入之后，就和在linux下操作mysql过程一样，如下：</span></span><br><span class="line">mysql -uroot -p</span><br><span class="line"><span class="meta">#</span><span class="bash">此时输入完密码就可以进入到数据库里面了，就可以写相关sql语句了</span></span><br><span class="line"><span class="meta">#</span><span class="bash">当然也可以通过windows下的sqlyog来进行访问，注意不能关闭防火墙，然后注意端口别写错了，要写前面映射的docker端口</span></span><br><span class="line"><span class="meta">#</span><span class="bash">当然也可以将mysql容器中的内容持久化到宿主机上，执行如下命令：</span></span><br><span class="line"><span class="meta">#</span><span class="bash">/mydocker/all-databases.sql这个为宿主机上的持久化到的路径</span></span><br><span class="line">docker exec 366f66d116c3 sh -c &#x27; exec mysqldump --all-databases -uroot -p&quot;123456&quot; &#x27; &gt; /mydocker/all-databases.sql</span><br><span class="line"><span class="meta">#</span><span class="bash">此时在/mydocker中就有了.sql文件，改文件就可以随时被导入其他库，这也就是持久化操作</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Docker实操2：docker上下载redis"><a href="#Docker实操2：docker上下载redis" class="headerlink" title="Docker实操2：docker上下载redis"></a>Docker实操2：docker上下载redis</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">拉取镜像</span></span><br><span class="line">docker pull redis:3.2</span><br><span class="line"><span class="meta">#</span><span class="bash">创建相关文件夹，用来和容器进行交互，也将作为数据卷</span></span><br><span class="line"><span class="meta">#</span><span class="bash">然后创建redis容器，后台运行</span></span><br><span class="line"><span class="meta">#</span><span class="bash">--apendonly yes表示开启持久化</span></span><br><span class="line">docker run -p 6379:6379 --name redis -v /mydocker/redis3.2/data:/data -v /mydocker/redis3.2/conf/redis.conf:/usr/local/etc/redis/redis.conf -d redis:3.2 redis-server /usr/local/etc/redis/redis.conf --appendonly yes</span><br><span class="line"><span class="meta">#</span><span class="bash">可以在redis.conf中创建redis.conf作为配置文件</span></span><br><span class="line"><span class="meta">#</span><span class="bash">进入到容器运行命令中</span></span><br><span class="line"><span class="meta">#</span><span class="bash">redis-cli相当于先进入了根目录，然后启动redis客户端</span></span><br><span class="line">docker exec -it e7fe8eb8a318 redis-cli</span><br><span class="line"><span class="meta">#</span><span class="bash">然后就可以正常操作redis了</span></span><br><span class="line"><span class="meta">#</span><span class="bash">退回到宿主机，就会发现，在/mydocker/redis3.2/data中就有appendonly.aof，这里面就是持久化文件，做得操作这里面都有</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Docker实操3：docker本地镜像推送到阿里云"><a href="#Docker实操3：docker本地镜像推送到阿里云" class="headerlink" title="Docker实操3：docker本地镜像推送到阿里云"></a>Docker实操3：docker本地镜像推送到阿里云</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">启动一个centos容器</span></span><br><span class="line">docker run -it mycentos:1.3</span><br><span class="line"><span class="meta">#</span><span class="bash">我们这里就当做对这个容器进行了一系列操作了，要把操作后的容器作为mycentos1.4版本镜像推送到阿里云，到时候可以直接用修改过得这个最新版的就可以</span></span><br><span class="line"><span class="meta">#</span><span class="bash">-a 作者信息</span></span><br><span class="line"><span class="meta">#</span><span class="bash">-m 镜像概述</span></span><br><span class="line"><span class="meta">#</span><span class="bash">27aaf78f3d45运行的容器号</span></span><br><span class="line"><span class="meta">#</span><span class="bash">最后是镜像名和版本名</span></span><br><span class="line"><span class="meta">#</span><span class="bash">这个指令执行完之后首先先推送到本地镜像库中，也就是docker images就会有mycentos1.4</span></span><br><span class="line">docker commit -a xuxin -m &quot;new mycentos1.4 with vim and ifconfig&quot; 27aaf78f3d45 mycentos:1.4</span><br><span class="line"><span class="meta">#</span><span class="bash">接下来去阿里云控制台中的容器镜像服务中去创建仓库，创建好之后在仓库的基本信息当中会有推送和拉取的操作指令</span></span><br><span class="line"><span class="meta">#</span><span class="bash">下面演示推送</span></span><br><span class="line"><span class="meta">#</span><span class="bash">该指令由阿里云那边提供的，刚刚说过</span></span><br><span class="line"><span class="meta">#</span><span class="bash">首次输入该指令会让输入阿里云登录密码</span></span><br><span class="line">docker login --username=徐鑫爱婷婷 registry.cn-hangzhou.aliyuncs.com</span><br><span class="line"><span class="meta">#</span><span class="bash">出现Login Success就说明成功登录到阿里云远程仓库</span></span><br><span class="line"><span class="meta">#</span><span class="bash">接下来执行下面两条指令</span></span><br><span class="line"><span class="meta">#</span><span class="bash">0e0916b8a60f为本地镜像的ID</span></span><br><span class="line"><span class="meta">#</span><span class="bash">mycentos:1.4.1为镜像名和镜像版本号</span></span><br><span class="line">docker tag 0e0916b8a60f registry.cn-hangzhou.aliyuncs.com/923992491/mycentos:1.4.1</span><br><span class="line"><span class="meta">#</span><span class="bash">下面指令开始推送</span></span><br><span class="line">docker push registry.cn-hangzhou.aliyuncs.com/923992491/mycentos:1.4.1</span><br><span class="line"><span class="meta">#</span><span class="bash">此时推送完成，也会发现我们本地镜像库也会多了一条，去到阿里云仓库中也多了一条mycentos1.4.1</span></span><br><span class="line"><span class="meta">#</span><span class="bash">接下来演示如何从自己的阿里云拉取自己上传过得镜像</span></span><br><span class="line"><span class="meta">#</span><span class="bash">我们先把自己的那个1.4.1的删除，方便演示，以免重复</span></span><br><span class="line">docker rmi -f registry.cn-hangzhou.aliyuncs.com/923992491/mycentos:1.4.1</span><br><span class="line"><span class="meta">#</span><span class="bash">下面开始从自己的仓库拉取</span></span><br><span class="line">docker pull registry.cn-hangzhou.aliyuncs.com/923992491/mycentos:1.4.1</span><br><span class="line"><span class="meta">#</span><span class="bash">此时拉取完成</span></span><br><span class="line"><span class="meta">#</span><span class="bash">以上为与阿里云仓库的交互</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Docker常用指令汇总："><a href="#Docker常用指令汇总：" class="headerlink" title="Docker常用指令汇总："></a>Docker常用指令汇总：</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">进入后台运行的容器</span></span><br><span class="line">docker attach 容器名字</span><br><span class="line"><span class="meta">#</span><span class="bash">删除容器</span></span><br><span class="line">docker rm -f 容器名字 </span><br><span class="line"><span class="meta">#</span><span class="bash">启动docker（关闭同理）</span></span><br><span class="line">systemctl start docker</span><br><span class="line"><span class="meta">#</span><span class="bash">启动tomcat，8888位docker映射端口号</span></span><br><span class="line">docker run -it -p 8888:8080 tomcat</span><br><span class="line"><span class="meta">#</span><span class="bash">把自己容器推送为镜像</span></span><br><span class="line">docker commit -a=&quot;作者&quot; -m=&quot;镜像描述信息&quot; 运行容器ID 镜像名:版本号</span><br><span class="line"><span class="meta">#</span><span class="bash">停止运行的容器</span></span><br><span class="line">docker stop 容器号</span><br><span class="line"><span class="meta">#</span><span class="bash">定义数据卷</span></span><br><span class="line">docker run -it -v 宿主位置:容器位置(也就是交互位置的映射关系，如果有:io，此时定义为只读) 镜像名</span><br><span class="line"><span class="meta">#</span><span class="bash">启动容器</span></span><br><span class="line">docker run -it --name 容器起的别名 镜像名</span><br><span class="line"><span class="meta">#</span><span class="bash">继承其他容器的数据卷启动容器</span></span><br><span class="line">docker run -it --name 容器起的别名 --volumes-from 继承容器的名字 镜像名</span><br><span class="line"><span class="meta">#</span><span class="bash">使在前台运行的容器退到后台</span></span><br><span class="line">ctrl+p+q</span><br><span class="line"><span class="meta">#</span><span class="bash">根据dockerfile编译生成自己的镜像</span></span><br><span class="line">docker build -f dockerfile路径 -t 镜像 .</span><br><span class="line"><span class="meta">#</span><span class="bash">查看容器信息（Json串的形式）</span></span><br><span class="line">docker inspect 容器ID</span><br><span class="line"><span class="meta">#</span><span class="bash">删除正在运行的容器</span></span><br><span class="line">docker rm -f $(docker ps -q)</span><br><span class="line"><span class="meta">#</span><span class="bash">可以查看“花卷”执行结构</span></span><br><span class="line">docker images 镜像ID</span><br><span class="line"><span class="meta">#</span><span class="bash">直接后台进入落地位置执行命令，只返回结果到前台</span></span><br><span class="line">docker exec 容器名 执行指令</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="参考文献："><a href="#参考文献：" class="headerlink" title="参考文献："></a>参考文献：</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yedongfeng_1314/article/details/87251705">https://blog.csdn.net/yedongfeng_1314/article/details/87251705</a>      CSDN博客，Docker笔记，相关概念有所借鉴，95%为自己总结</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">xuxin923992491</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://xuxin923992491.github.io/2021/05/23/Docker%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/">https://xuxin923992491.github.io/2021/05/23/Docker%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/05/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%A4%8D%E4%B9%A0/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">计算机网络复习</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/null" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">xuxin923992491</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">4</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93"><span class="toc-number">1.</span> <span class="toc-text">Docker学习总结</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AF%94%E8%BE%83-Docker-%E5%92%8C%E4%BC%A0%E7%BB%9F%E8%99%9A%E6%8B%9F%E5%8C%96%E6%96%B9%E5%BC%8F%E7%9A%84%E4%B8%8D%E5%90%8C%E4%B9%8B%E5%A4%84%EF%BC%9A"><span class="toc-number">1.0.1.</span> <span class="toc-text">比较 Docker 和传统虚拟化方式的不同之处：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Docker%E5%AE%B9%E5%99%A8%E7%9A%84%E5%A5%BD%E5%A4%84%EF%BC%9A%E4%B8%80%E6%AC%A1%E6%9E%84%E5%BB%BA%EF%BC%8C%E9%9A%8F%E5%A4%84%E8%BF%90%E8%A1%8C"><span class="toc-number">1.0.2.</span> <span class="toc-text">Docker容器的好处：一次构建，随处运行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Docker%E4%BD%BF%E7%94%A8%E5%BF%83%E5%BE%97%EF%BC%9A"><span class="toc-number">1.0.3.</span> <span class="toc-text">Docker使用心得：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Docker%E7%9A%84%E6%B5%81%E7%A8%8B%EF%BC%9A"><span class="toc-number">1.0.4.</span> <span class="toc-text">Docker的流程：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Docker%E9%95%9C%E5%83%8F%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="toc-number">1.0.5.</span> <span class="toc-text">Docker镜像原理：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%B9%E5%99%A8%E6%95%B0%E6%8D%AE%E5%8D%B7%EF%BC%9A"><span class="toc-number">1.0.6.</span> <span class="toc-text">容器数据卷：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Dockerfile%EF%BC%9A"><span class="toc-number">1.0.7.</span> <span class="toc-text">Dockerfile：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Docker%E5%AE%9E%E6%93%8D1%EF%BC%9Adocker%E4%B8%8A%E4%B8%8B%E8%BD%BDmysql%E9%95%9C%E5%83%8F"><span class="toc-number">1.0.8.</span> <span class="toc-text">Docker实操1：docker上下载mysql镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Docker%E5%AE%9E%E6%93%8D2%EF%BC%9Adocker%E4%B8%8A%E4%B8%8B%E8%BD%BDredis"><span class="toc-number">1.0.9.</span> <span class="toc-text">Docker实操2：docker上下载redis</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Docker%E5%AE%9E%E6%93%8D3%EF%BC%9Adocker%E6%9C%AC%E5%9C%B0%E9%95%9C%E5%83%8F%E6%8E%A8%E9%80%81%E5%88%B0%E9%98%BF%E9%87%8C%E4%BA%91"><span class="toc-number">1.0.10.</span> <span class="toc-text">Docker实操3：docker本地镜像推送到阿里云</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Docker%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4%E6%B1%87%E6%80%BB%EF%BC%9A"><span class="toc-number">1.0.11.</span> <span class="toc-text">Docker常用指令汇总：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE%EF%BC%9A"><span class="toc-number">1.0.12.</span> <span class="toc-text">参考文献：</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/05/23/Docker%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" title="Docker学习总结"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Docker学习总结"/></a><div class="content"><a class="title" href="/2021/05/23/Docker%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" title="Docker学习总结">Docker学习总结</a><time datetime="2021-05-23T03:09:47.885Z" title="Created 2021-05-23 11:09:47">2021-05-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%A4%8D%E4%B9%A0/" title="计算机网络复习"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络复习"/></a><div class="content"><a class="title" href="/2021/05/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%A4%8D%E4%B9%A0/" title="计算机网络复习">计算机网络复习</a><time datetime="2021-05-10T11:49:12.945Z" title="Created 2021-05-10 19:49:12">2021-05-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/03/JVM%E5%A4%8D%E4%B9%A0/" title="First blog(JVM Review)"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="First blog(JVM Review)"/></a><div class="content"><a class="title" href="/2021/05/03/JVM%E5%A4%8D%E4%B9%A0/" title="First blog(JVM Review)">First blog(JVM Review)</a><time datetime="2021-05-03T02:42:40.369Z" title="Created 2021-05-03 10:42:40">2021-05-03</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2021/05/02/hello-world/" title="Hello World">Hello World</a><time datetime="2021-05-02T09:17:00.137Z" title="Created 2021-05-02 17:17:00">2021-05-02</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By xuxin923992491</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
