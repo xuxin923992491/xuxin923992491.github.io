@@ -1,0 +1,541 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mysql专题——MVCC和间隙锁 | Hexo</title><meta name="author" content="xuxin923992491"><meta name="copyright" content="xuxin923992491"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Mysql专题——MVCC和间隙锁相关概念什么是MVCC（背景）？多个事务操作同一条数据的时候，即使这些操作既包括读，也包括写，此时的过程就是数据库事务并发的过程，在InnoDB中，为了提高刚刚所说的读写并发能力，处理好并发情况下的读写冲突，读取数据不一致的问题，这里采用了一种叫做多版本并发控制（MVCC）的方法，好处是能够做到不加锁，能够非阻塞的并发读。关于数据的读取，还会分为两种读取方式，分别">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql专题——MVCC和间隙锁">
+<meta property="og:url" content="https://xuxin923992491.github.io/2021/06/02/Mysql%E4%B8%93%E9%A2%98%E2%80%94%E2%80%94MVCC%E5%92%8C%E9%97%B4%E9%9A%99%E9%94%81/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Mysql专题——MVCC和间隙锁相关概念什么是MVCC（背景）？多个事务操作同一条数据的时候，即使这些操作既包括读，也包括写，此时的过程就是数据库事务并发的过程，在InnoDB中，为了提高刚刚所说的读写并发能力，处理好并发情况下的读写冲突，读取数据不一致的问题，这里采用了一种叫做多版本并发控制（MVCC）的方法，好处是能够做到不加锁，能够非阻塞的并发读。关于数据的读取，还会分为两种读取方式，分别">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-06-02T13:29:12.896Z">
+<meta property="article:modified_time" content="2021-06-02T13:30:46.782Z">
+<meta property="article:author" content="xuxin923992491">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://xuxin923992491.github.io/2021/06/02/Mysql%E4%B8%93%E9%A2%98%E2%80%94%E2%80%94MVCC%E5%92%8C%E9%97%B4%E9%9A%99%E9%94%81/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-06-02 21:30:46'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/null" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">6</div></a></div></div></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Hexo</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Mysql专题——MVCC和间隙锁</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-06-02T13:29:12.896Z" title="Created 2021-06-02 21:29:12">2021-06-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-06-02T13:30:46.782Z" title="Updated 2021-06-02 21:30:46">2021-06-02</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Mysql专题——MVCC和间隙锁"><a href="#Mysql专题——MVCC和间隙锁" class="headerlink" title="Mysql专题——MVCC和间隙锁"></a>Mysql专题——MVCC和间隙锁</h1><h2 id="相关概念"><a href="#相关概念" class="headerlink" title="相关概念"></a>相关概念</h2><h3 id="什么是MVCC（背景）？"><a href="#什么是MVCC（背景）？" class="headerlink" title="什么是MVCC（背景）？"></a>什么是MVCC（背景）？</h3><p>多个事务操作同一条数据的时候，即使这些操作既包括读，也包括写，此时的过程就是数据库事务并发的过程，在InnoDB中，为了提高刚刚所说的读写并发能力，处理好并发情况下的读写冲突，读取数据不一致的问题，这里采用了一种叫做多版本并发控制（MVCC）的方法，好处是能够做到不加锁，能够非阻塞的并发读。关于数据的读取，还会分为两种读取方式，分别为当前读和快照读</p>
+<h3 id="数据库的并发场景？"><a href="#数据库的并发场景？" class="headerlink" title="数据库的并发场景？"></a>数据库的并发场景？</h3><h4 id="读-读："><a href="#读-读：" class="headerlink" title="读-读："></a>读-读：</h4><ul>
+<li>不存在任何问题，也不需要并发控制</li>
+</ul>
+<h4 id="读-写："><a href="#读-写：" class="headerlink" title="读-写："></a>读-写：</h4><ul>
+<li>有线程安全问题，可能会造成事务隔离性问题，可能遇到脏读，幻读，不可重复读</li>
+<li>也就是一个事务读的过程中，其他事务进行了相关写操作，造成了读取数据不一致</li>
+</ul>
+<h4 id="写-写："><a href="#写-写：" class="headerlink" title="写-写："></a>写-写：</h4><ul>
+<li>有线程安全问题，多个事务同时写，可能会存在更新丢失或者也叫数据覆盖问题</li>
+</ul>
+<h3 id="什么是当前读？什么是快照读？"><a href="#什么是当前读？什么是快照读？" class="headerlink" title="什么是当前读？什么是快照读？"></a>什么是当前读？什么是快照读？</h3><h4 id="当前读："><a href="#当前读：" class="headerlink" title="当前读："></a>当前读：</h4><ul>
+<li>什么是当前读：读取到的内容一定要是数据的最新版本，保证的数据的准确性，其他的并发事务不能够并发的改变正在读取的数据</li>
+<li>本质：实际上，当前读是一种加锁的读，会对读取的记录进行加锁处理，保证当前读的准确性，是悲观锁的实现</li>
+<li>最常见的当前读：在进行增删改操作语句的时候的步骤是先读取数据再进行操作，此时的读就是当前读，此时的读被加了锁</li>
+</ul>
+<h4 id="快照读："><a href="#快照读：" class="headerlink" title="快照读："></a>快照读：</h4><ul>
+<li><p>什么是快照读：对比当前读，快照读是不进行加锁的读取，也就是说一个事务在读取一条数据的时候允许其他事务对读取的数据进行相关操作，是一个事务并发的过程，换句话说，快照读出现在隔离级别不是串行化的事务当中，否则就变成了当前读</p>
+</li>
+<li><p>会出现什么问题：此时在无锁的情况下，就会出现多个事务读写数据不一致的情况，比如脏读，不可重复读，幻读等</p>
+</li>
+<li><p>如何无锁解决该问题：对于数据的读取，由于受到了其他事务的操作，此时该条数据会产生多个版本，MVCC的作用是从这么多个版本当中按照一定的规则去挑选出一个版本，作为读取的结果，至于什么样的规则，在可重复读与读已提交的事务隔离级别中的规则是不一样的，后续会分类讲解</p>
+</li>
+</ul>
+<h3 id="MVCC的优点或作用："><a href="#MVCC的优点或作用：" class="headerlink" title="MVCC的优点或作用："></a>MVCC的优点或作用：</h3><ul>
+<li>在并发读写数据库时，可以做到在读操作时不用阻塞写操作，写操作也不用阻塞读操作，提高了数据库并发读写的性能</li>
+<li>同时还可以解决脏读，幻读，不可重复读等事务隔离问题，但不能解决更新丢失问题，因为丢失修改属于写-写冲突</li>
+<li>此时需要注意：在读已提交的隔离级别中，MVCC的规则解决了脏独的问题，在可重复读的隔离级别中，MVCC的规则解决了不可重复读以及快照读的幻读问题，也就是说对于幻读，只解决了一部分幻读问题，在MVCC原理当中，将分别讲解这三种情况的原理</li>
+</ul>
+<h2 id="MVCC原理分析"><a href="#MVCC原理分析" class="headerlink" title="MVCC原理分析"></a>MVCC原理分析</h2><h3 id="补充知识："><a href="#补充知识：" class="headerlink" title="补充知识："></a>补充知识：</h3><h4 id="事务ID："><a href="#事务ID：" class="headerlink" title="事务ID："></a>事务ID：</h4><ul>
+<li>每开启一个事务，这个事务都有属于自己的编号，叫做事务ID</li>
+</ul>
+<h4 id="隐式字段："><a href="#隐式字段：" class="headerlink" title="隐式字段："></a>隐式字段：</h4><ul>
+<li>查询过程中，查询出来的结果除了表中的字段之外，还包括三个隐藏的字段，是mysql自己提供的，如下：</li>
+<li>DB_TRX_ID：操作该数据的事务ID</li>
+<li>DB_ROLL_PTR：回滚指针，里面是一个地址，指向的是这条数据的上一个版本，或者叫做被修改之前的版本</li>
+<li>DB_ROW_ID：自增ID，当数据库表没有提供自增主键索引或者唯一索引的时候数据库会自动分配的主键索引</li>
+<li>flag删除字段（特殊）：该字段是真正的隐藏起来的，当删除数据的时候采用的是逻辑删除，将flag置为1，表示删除了数据</li>
+</ul>
+<h4 id="undo-log（日志）："><a href="#undo-log（日志）：" class="headerlink" title="undo log（日志）："></a>undo log（日志）：</h4><ul>
+<li><p>什么时候出现：只要开启事务，对数据操作，就会产生版本日志</p>
+</li>
+<li><p>内容1：在这个日志中，会记录查询记录的所有版本，版本与版本之间通过回滚指针相连，形成了版本链，MVCC的核心原理就是从这个版本链当中从上到下按照规则的找，哪个符合规则，就将哪个版本读取出来</p>
+</li>
+<li><p>内容2：每个版本的具体内容包括操作的数据以及上述隐藏字段</p>
+</li>
+</ul>
+<h4 id="Read-View（读视图）："><a href="#Read-View（读视图）：" class="headerlink" title="Read View（读视图）："></a>Read View（读视图）：</h4><ul>
+<li><p>什么是Read View：前文提到的按照某种规则来进行查找版本链，而这个Read View就是提供规则的标准，换句话说，规则就是以它为基准来指定，因此在RC和RR两种隔离级别中，Read View的生成方式不一样，自然也就导致隔离级别不一样</p>
+</li>
+<li><p>什么时候产生Read View：由于MVCC基于的是快照读，产生的时间点根据隔离级别不同，时间也就不同：</p>
+<ul>
+<li>RC：只要在事务中读一次，那么就重新生成一个Read View</li>
+<li>RR：当读事务开启的时候，就会产生唯一一个Read View，只要这个读事务不结束，无论读多少次，Read View也不变</li>
+</ul>
+</li>
+<li><p>Read View的产生时机决定了RC和RR解决的事务并发问题的不同，也就是决定了这两种隔离级别</p>
+</li>
+<li><p>Read View的组成：</p>
+<ul>
+<li>当前版本链中，所有未提交事务的事务id数组</li>
+<li>读事务开启，第一次读的时候的活跃的（版本链中存在的）最大事务id（有的博主也说是再生成事务时候的事务ID，其实差不多）</li>
+<li>主要就是以上两部分（还有一个就是当前读事务的事务id，该部分不需要过度关注，因为我们知道在当前的读事务的操作中，无论做什么操作都是能读出来的，毕竟是在当前事务）</li>
+</ul>
+</li>
+<li><p>读取规则：从开始读的时刻的版本链向下一个一个找，把走到的事务成为当前事务：</p>
+<ul>
+<li>如果当前事务id&lt;未提交事务id数组中的最小值，说明当前事务的id已经提交了，那么此事务可读，可以直接读出来，不用继续向下找了，否则继续按照版本链向下</li>
+<li>如果当前事务id在未提交事务id数组当中，说明该事务未提交，则不可读（只有当前事务可读）</li>
+<li>如果当前事务id不在未提交事务id数组当中并且小于等于最大事务id，说明已经提交了，可读</li>
+<li>如果当前事务id大于了最大事务id，说明是在我开启读事务之后再进行的事务，此时不可读（也突出了快照的特点）</li>
+</ul>
+</li>
+</ul>
+<h3 id="过程演示："><a href="#过程演示：" class="headerlink" title="过程演示："></a>过程演示：</h3><p>查表中id=1的记录，修改也是改id=1的记录</p>
+<h4 id="以下为多个事务的执行流程："><a href="#以下为多个事务的执行流程：" class="headerlink" title="以下为多个事务的执行流程："></a>以下为多个事务的执行流程：</h4><table>
+<thead>
+<tr>
+<th>事务1</th>
+<th>事务2</th>
+<th>事务3</th>
+<th>事务4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>B</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>commit</td>
+<td>C</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td>select</td>
+</tr>
+<tr>
+<td>D</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td>select</td>
+</tr>
+<tr>
+<td>commit</td>
+<td></td>
+<td>E</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td>select</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>commit</td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="以下为事务的版本链："><a href="#以下为事务的版本链：" class="headerlink" title="以下为事务的版本链："></a>以下为事务的版本链：</h4><table>
+<thead>
+<tr>
+<th>操作的值</th>
+<th>事务id</th>
+<th>回滚指针</th>
+<th>RC的Read View</th>
+<th>RR的Read View</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>E</td>
+<td>3</td>
+<td>1</td>
+<td>【3】3            读取的事务为1，值为D</td>
+<td>【1,3】3         读取的事务为2，值为B</td>
+</tr>
+<tr>
+<td>D</td>
+<td>1</td>
+<td>3</td>
+<td>【1,3】3         读取的事务为2，值为B</td>
+<td>【1,3】3         读取的事务为2，值为B</td>
+</tr>
+<tr>
+<td>C</td>
+<td>3</td>
+<td>2</td>
+<td>【1,3】3         读取的事务为2，值为B</td>
+<td>【1,3】3         读取的事务为2，值为B</td>
+</tr>
+<tr>
+<td>B</td>
+<td>2</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>A</td>
+<td>1</td>
+<td>NULL</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="上述过程的相关结论："><a href="#上述过程的相关结论：" class="headerlink" title="上述过程的相关结论："></a>上述过程的相关结论：</h4><ul>
+<li>通过RC的Read View读取的结果发现，此时发生了不可重复读，但是完成了读已提交</li>
+<li>通过RR的Read View读取的结果发现，此时完成了可重复读</li>
+</ul>
+<h4 id="提出问题："><a href="#提出问题：" class="headerlink" title="提出问题："></a>提出问题：</h4><p>按照上面的RR的方式，对于其他事务的操作，肯定也包括插入，那么插入的时候由于Read View不变，那么插入数据的事务应该也不起作用，此时就不应该发生幻读，那么为什么说可重复读的隔离级别还是不能避免幻读呢？看如下演示情况：</p>
+<h4 id="幻读演示：包含快照读和当前读"><a href="#幻读演示：包含快照读和当前读" class="headerlink" title="幻读演示：包含快照读和当前读:"></a>幻读演示：包含快照读和当前读:</h4><ul>
+<li><p>假设表中有如下数据：</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>jack</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>开启如下事务，首先演示快照读</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>事务1</th>
+<th>事务2</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>select *</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>insert    2    Nancy</td>
+</tr>
+<tr>
+<td></td>
+<td>commit</td>
+</tr>
+<tr>
+<td>select *</td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li>根据RR的MVCC可知，事务1的Read View不会变，所以事务2做的改变并不会被查询到，此时解决了快照读的幻读</li>
+<li>开启如下事务，首先演示当前读</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>事务1</th>
+<th>事务2</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>select *</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>insert    2    Nancy</td>
+</tr>
+<tr>
+<td></td>
+<td>commit</td>
+</tr>
+<tr>
+<td>insert  2     Linda</td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li>此时的执行的事务1执行的insert报错，报错的内容是主键2已经存在了，说明在执行insert的时候首先执行了当前读，查到了表中已经多了一条数据，所以不能够再插入了，此时在事务1中的两次读取过程中，读到了多一条数据，此时发生了幻读</li>
+</ul>
+<h4 id="如何解决幻读？"><a href="#如何解决幻读？" class="headerlink" title="如何解决幻读？"></a>如何解决幻读？</h4><ul>
+<li>很明显可重复读的隔离级别没有办法彻底的解决幻读的问题，如果我们的项目中需要解决幻读的话也有两个办法：</li>
+<li>使用串行化读的隔离级别</li>
+<li>MVCC + 间隙锁</li>
+</ul>
+<h2 id="间隙锁"><a href="#间隙锁" class="headerlink" title="间隙锁"></a>间隙锁</h2><h3 id="相关概念-1"><a href="#相关概念-1" class="headerlink" title="相关概念"></a>相关概念</h3><h4 id="什么是间隙："><a href="#什么是间隙：" class="headerlink" title="什么是间隙："></a>什么是间隙：</h4><ul>
+<li>在查询过程中，设置了索引，会按照索引进行查询，索引之间的范围或者第一个索引前面或者最后一个索引后面的范围都是间隙</li>
+</ul>
+<h4 id="什么是间隙锁："><a href="#什么是间隙锁：" class="headerlink" title="什么是间隙锁："></a>什么是间隙锁：</h4><ul>
+<li>间隙锁（Gap Lock）是Innodb在RR隔离级别提交下为了解决幻读问题时引入的锁机制</li>
+<li>间隙锁通常是用来解决幻读的，我们都默认已经解决了不可重复的问题，因为MVCC，所以我们当前处在的是RR的隔离级别</li>
+<li>在RC的隔离级别不用确保多次读的一致性，因此也不存在幻读的概念</li>
+<li>我们通常研究的索引为唯一索引和普通索引</li>
+<li>下面通过示例来理解一下什么是间隙，以及如何加间隙锁，普通索引和唯一索引分别都是怎么加入间隙锁的</li>
+</ul>
+<h3 id="示例演示过程"><a href="#示例演示过程" class="headerlink" title="示例演示过程"></a>示例演示过程</h3><h4 id="索引为唯一索引："><a href="#索引为唯一索引：" class="headerlink" title="索引为唯一索引："></a>索引为唯一索引：</h4><table>
+<thead>
+<tr>
+<th>id（主键索引）</th>
+<th>number</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>13</td>
+<td>3</td>
+</tr>
+<tr>
+<td>23</td>
+<td>3</td>
+</tr>
+<tr>
+<td>31</td>
+<td>11</td>
+</tr>
+<tr>
+<td>40</td>
+<td>40</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p>此时的间隙为（无穷小，1），（1,2），（2,13），（13,23），（23,31），（31,40），（40，无穷大）</p>
+</li>
+<li><p>命中唯一索引记录：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">2</span> <span class="keyword">for</span> update</span><br></pre></td></tr></table></figure>
+
+<p>此时只会对id=2，number=3这条记录加上行锁，不会产生间隙锁，因此，插入id=3，id=4等后面间隙当中都不会阻塞</p>
+</li>
+<li><p>未命中索引记录：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">3</span> <span class="keyword">for</span> update</span><br></pre></td></tr></table></figure>
+
+<p>此时，没有查到id=3的记录，就叫做未命中唯一索引，此时产生间隙锁，id=3处在（2,13）这个间隙当中，如果有事务想要在这个间隙当中插入以id作为索引的数据，那么就会阻塞，比如insert into test(id, number) value(5, 3)，此时阻塞，因为5在2到13的间隙中</p>
+</li>
+<li><p>范围内命中索引，此时升级为临建锁（行锁+间隙锁）：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> id <span class="keyword">between</span> <span class="number">5</span> <span class="keyword">and</span> <span class="number">15</span> <span class="keyword">for</span> update</span><br></pre></td></tr></table></figure>
+
+<p>此时，在5到15这个范围，命中了id=13这条记录，此时命中了索引，索引id=13，number=3这条记录被加上了行锁，与此同时，5到15这个范围又处在了（2,13）和（13，23）这两个间隙当中，因此这两个间隙被加上了间隙锁，此时在两个范围内就不能够插入数据，因此也叫做临键锁，即既生成了行锁，又生成了间隙锁</p>
+</li>
+<li><p>范围内未命中索引记录：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> id <span class="keyword">between</span> <span class="number">6</span> <span class="keyword">and</span> <span class="number">10</span> <span class="keyword">for</span> update</span><br></pre></td></tr></table></figure>
+
+<p>此时6到10这个范围未命中索引，但是处在了（2,13）这个范围内，因此这个间隙被加上了间隙锁</p>
+</li>
+</ul>
+<h4 id="索引为普通索引："><a href="#索引为普通索引：" class="headerlink" title="索引为普通索引："></a>索引为普通索引：</h4><table>
+<thead>
+<tr>
+<th>id（主键索引）</th>
+<th>number（普通索引）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>13</td>
+<td>3</td>
+</tr>
+<tr>
+<td>23</td>
+<td>3</td>
+</tr>
+<tr>
+<td>31</td>
+<td>11</td>
+</tr>
+<tr>
+<td>40</td>
+<td>40</td>
+</tr>
+</tbody></table>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> number <span class="operator">=</span> <span class="number">3</span> <span class="keyword">for</span> update</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>上述查询语句是按照number这个普通索引来进行查询的，那么对于number索引可以产生多个间隙：(无穷小,1)，(1,3)，(3,11)，(11，40)，(40，无穷大)</p>
+</li>
+<li><p>注意，对于普通索引，即使命中普通索引，也会产生间隙锁，命中的前面一个间隙和后面一个间隙都会被加锁，这里面命中的是索引3，前后两个间隙为(1,3)，(3,11)，对应的边界记录为(id=1,number=1)和(id=31,number=11)，也就是这个记录内的会被加锁，下面将通过sql语句说明：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test(id, number) <span class="keyword">value</span>(<span class="number">5</span>, <span class="number">3</span>)       <span class="comment">--此时number=3在范围内，阻塞--</span></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test(id, number) <span class="keyword">value</span>(<span class="number">25</span>, <span class="number">4</span>)      <span class="comment">--number=4，也是会被阻塞--</span></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test(id, number) <span class="keyword">value</span>(<span class="number">35</span>, <span class="number">4</span>)      <span class="comment">--id=35超过了边界31，但是还是被阻塞，是因为首先看4,4在边界内了--</span></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test(id, number) <span class="keyword">value</span>(<span class="number">71</span>, <span class="number">11</span>) 	   <span class="comment">--number=11，此时要看id在不在范围内，71&gt;31，此时不在，插入成功--</span></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test(id, number) <span class="keyword">value</span>(<span class="number">22</span>, <span class="number">12</span>)     <span class="comment">--number=12超过了11，一定在范围外了，插入成功--</span></span><br></pre></td></tr></table></figure></li>
+<li><p>上述sql语句说明，如果普通索引在间隙内，那么比较普通索引即可，当普通索引相同的时候，要看唯一索引是否是在间隙内</p>
+</li>
+</ul>
+<h3 id="总结间隙锁的加锁规则："><a href="#总结间隙锁的加锁规则：" class="headerlink" title="总结间隙锁的加锁规则："></a>总结间隙锁的加锁规则：</h3><h4 id="唯一索引（主键索引）"><a href="#唯一索引（主键索引）" class="headerlink" title="唯一索引（主键索引）"></a>唯一索引（主键索引）</h4><ul>
+<li><p>查询一条记录：</p>
+<ul>
+<li>命中索引加行锁</li>
+<li>未命中索引，在所属间隙加上间隙锁</li>
+</ul>
+</li>
+<li><p>范围查询：</p>
+<ul>
+<li>命中索引，加临键锁（命中的索引记录加上行锁，其余处在间隙的部分加间隙锁）</li>
+<li>未命中索引记录，所处的间隙加上间隙锁</li>
+</ul>
+</li>
+</ul>
+<h4 id="普通索引："><a href="#普通索引：" class="headerlink" title="普通索引："></a>普通索引：</h4><ul>
+<li>对于普通索引列的查询，不管是是否命中索引，只要加锁，都会产生间隙锁（和唯一索引的区别）</li>
+<li>在普通索引跟唯一索引中，数据间隙的分析，数据行是优先根据普通索引排序，再根据唯一索引排序。</li>
+</ul>
+<h4 id="参考文献："><a href="#参考文献：" class="headerlink" title="参考文献："></a>参考文献：</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/godloveleo9527/article/details/109554263">MySQL可重复读隔离级别为何没有解决幻读（MVCC原理简介）_Boush-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/48269420">MySQL的锁机制 - 记录锁、间隙锁、临键锁 - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_39035120/article/details/105937400">记录锁、间隙锁和临键锁_超人不会飞2018的博客-CSDN博客_间隙锁和临键锁</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1YJ411J7vb?t=1249">全网独家MySQL的MVCC底层原理讲解视频_哔哩哔哩_bilibili</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Vk4y1k7KQ?t=40">【Java学姐】Mysql-MVCC多版本并发控制底层原理及实现机制_哔哩哔哩_bilibili</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1VZ4y1T7dE?t=1642">数据库事务原理 ACID 事务隔离级别 脏读 不可重复读 幻读 实战详解_哔哩哔哩_bilibili</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">xuxin923992491</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://xuxin923992491.github.io/2021/06/02/Mysql%E4%B8%93%E9%A2%98%E2%80%94%E2%80%94MVCC%E5%92%8C%E9%97%B4%E9%9A%99%E9%94%81/">https://xuxin923992491.github.io/2021/06/02/Mysql%E4%B8%93%E9%A2%98%E2%80%94%E2%80%94MVCC%E5%92%8C%E9%97%B4%E9%9A%99%E9%94%81/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/05/29/%E9%98%B6%E6%AE%B5%E6%80%A7%E5%A4%8D%E4%B9%A0%EF%BC%88%E5%AE%B9%E5%99%A8%E7%AF%87%EF%BC%89/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">阶段性复习（容器篇）</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/null" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">xuxin923992491</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">6</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Mysql%E4%B8%93%E9%A2%98%E2%80%94%E2%80%94MVCC%E5%92%8C%E9%97%B4%E9%9A%99%E9%94%81"><span class="toc-number">1.</span> <span class="toc-text">Mysql专题——MVCC和间隙锁</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5"><span class="toc-number">1.1.</span> <span class="toc-text">相关概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFMVCC%EF%BC%88%E8%83%8C%E6%99%AF%EF%BC%89%EF%BC%9F"><span class="toc-number">1.1.1.</span> <span class="toc-text">什么是MVCC（背景）？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%B9%B6%E5%8F%91%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="toc-number">1.1.2.</span> <span class="toc-text">数据库的并发场景？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%BB-%E8%AF%BB%EF%BC%9A"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">读-读：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%BB-%E5%86%99%EF%BC%9A"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">读-写：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%99-%E5%86%99%EF%BC%9A"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">写-写：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%BD%93%E5%89%8D%E8%AF%BB%EF%BC%9F%E4%BB%80%E4%B9%88%E6%98%AF%E5%BF%AB%E7%85%A7%E8%AF%BB%EF%BC%9F"><span class="toc-number">1.1.3.</span> <span class="toc-text">什么是当前读？什么是快照读？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BD%93%E5%89%8D%E8%AF%BB%EF%BC%9A"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">当前读：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BF%AB%E7%85%A7%E8%AF%BB%EF%BC%9A"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">快照读：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MVCC%E7%9A%84%E4%BC%98%E7%82%B9%E6%88%96%E4%BD%9C%E7%94%A8%EF%BC%9A"><span class="toc-number">1.1.4.</span> <span class="toc-text">MVCC的优点或作用：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVCC%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">MVCC原理分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%A5%E5%85%85%E7%9F%A5%E8%AF%86%EF%BC%9A"><span class="toc-number">1.2.1.</span> <span class="toc-text">补充知识：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1ID%EF%BC%9A"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">事务ID：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%90%E5%BC%8F%E5%AD%97%E6%AE%B5%EF%BC%9A"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">隐式字段：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#undo-log%EF%BC%88%E6%97%A5%E5%BF%97%EF%BC%89%EF%BC%9A"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">undo log（日志）：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Read-View%EF%BC%88%E8%AF%BB%E8%A7%86%E5%9B%BE%EF%BC%89%EF%BC%9A"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">Read View（读视图）：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E7%A8%8B%E6%BC%94%E7%A4%BA%EF%BC%9A"><span class="toc-number">1.2.2.</span> <span class="toc-text">过程演示：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A5%E4%B8%8B%E4%B8%BA%E5%A4%9A%E4%B8%AA%E4%BA%8B%E5%8A%A1%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%EF%BC%9A"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">以下为多个事务的执行流程：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A5%E4%B8%8B%E4%B8%BA%E4%BA%8B%E5%8A%A1%E7%9A%84%E7%89%88%E6%9C%AC%E9%93%BE%EF%BC%9A"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">以下为事务的版本链：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8A%E8%BF%B0%E8%BF%87%E7%A8%8B%E7%9A%84%E7%9B%B8%E5%85%B3%E7%BB%93%E8%AE%BA%EF%BC%9A"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">上述过程的相关结论：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8F%90%E5%87%BA%E9%97%AE%E9%A2%98%EF%BC%9A"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">提出问题：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%BB%E8%AF%BB%E6%BC%94%E7%A4%BA%EF%BC%9A%E5%8C%85%E5%90%AB%E5%BF%AB%E7%85%A7%E8%AF%BB%E5%92%8C%E5%BD%93%E5%89%8D%E8%AF%BB"><span class="toc-number">1.2.2.5.</span> <span class="toc-text">幻读演示：包含快照读和当前读:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%B9%BB%E8%AF%BB%EF%BC%9F"><span class="toc-number">1.2.2.6.</span> <span class="toc-text">如何解决幻读？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%B4%E9%9A%99%E9%94%81"><span class="toc-number">1.3.</span> <span class="toc-text">间隙锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5-1"><span class="toc-number">1.3.1.</span> <span class="toc-text">相关概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%97%B4%E9%9A%99%EF%BC%9A"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">什么是间隙：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%97%B4%E9%9A%99%E9%94%81%EF%BC%9A"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">什么是间隙锁：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E6%BC%94%E7%A4%BA%E8%BF%87%E7%A8%8B"><span class="toc-number">1.3.2.</span> <span class="toc-text">示例演示过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E4%B8%BA%E5%94%AF%E4%B8%80%E7%B4%A2%E5%BC%95%EF%BC%9A"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">索引为唯一索引：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E4%B8%BA%E6%99%AE%E9%80%9A%E7%B4%A2%E5%BC%95%EF%BC%9A"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">索引为普通索引：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E9%97%B4%E9%9A%99%E9%94%81%E7%9A%84%E5%8A%A0%E9%94%81%E8%A7%84%E5%88%99%EF%BC%9A"><span class="toc-number">1.3.3.</span> <span class="toc-text">总结间隙锁的加锁规则：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%94%AF%E4%B8%80%E7%B4%A2%E5%BC%95%EF%BC%88%E4%B8%BB%E9%94%AE%E7%B4%A2%E5%BC%95%EF%BC%89"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">唯一索引（主键索引）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%99%AE%E9%80%9A%E7%B4%A2%E5%BC%95%EF%BC%9A"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">普通索引：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE%EF%BC%9A"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">参考文献：</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/06/02/Mysql%E4%B8%93%E9%A2%98%E2%80%94%E2%80%94MVCC%E5%92%8C%E9%97%B4%E9%9A%99%E9%94%81/" title="Mysql专题——MVCC和间隙锁"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Mysql专题——MVCC和间隙锁"/></a><div class="content"><a class="title" href="/2021/06/02/Mysql%E4%B8%93%E9%A2%98%E2%80%94%E2%80%94MVCC%E5%92%8C%E9%97%B4%E9%9A%99%E9%94%81/" title="Mysql专题——MVCC和间隙锁">Mysql专题——MVCC和间隙锁</a><time datetime="2021-06-02T13:29:12.896Z" title="Created 2021-06-02 21:29:12">2021-06-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/29/%E9%98%B6%E6%AE%B5%E6%80%A7%E5%A4%8D%E4%B9%A0%EF%BC%88%E5%AE%B9%E5%99%A8%E7%AF%87%EF%BC%89/" title="阶段性复习（容器篇）"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="阶段性复习（容器篇）"/></a><div class="content"><a class="title" href="/2021/05/29/%E9%98%B6%E6%AE%B5%E6%80%A7%E5%A4%8D%E4%B9%A0%EF%BC%88%E5%AE%B9%E5%99%A8%E7%AF%87%EF%BC%89/" title="阶段性复习（容器篇）">阶段性复习（容器篇）</a><time datetime="2021-05-29T13:18:20.552Z" title="Created 2021-05-29 21:18:20">2021-05-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/23/Docker%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" title="Docker学习总结"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Docker学习总结"/></a><div class="content"><a class="title" href="/2021/05/23/Docker%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" title="Docker学习总结">Docker学习总结</a><time datetime="2021-05-23T03:09:47.885Z" title="Created 2021-05-23 11:09:47">2021-05-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%A4%8D%E4%B9%A0/" title="计算机网络复习"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络复习"/></a><div class="content"><a class="title" href="/2021/05/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%A4%8D%E4%B9%A0/" title="计算机网络复习">计算机网络复习</a><time datetime="2021-05-10T11:49:12.945Z" title="Created 2021-05-10 19:49:12">2021-05-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/03/JVM%E5%A4%8D%E4%B9%A0/" title="First blog(JVM Review)"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="First blog(JVM Review)"/></a><div class="content"><a class="title" href="/2021/05/03/JVM%E5%A4%8D%E4%B9%A0/" title="First blog(JVM Review)">First blog(JVM Review)</a><time datetime="2021-05-03T02:42:40.369Z" title="Created 2021-05-03 10:42:40">2021-05-03</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By xuxin923992491</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
