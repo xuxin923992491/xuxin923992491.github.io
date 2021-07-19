@@ -1,0 +1,275 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>单例模式和类加载 | 努力努力再努力</title><meta name="author" content="xuxin923992491"><meta name="copyright" content="xuxin923992491"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="单例设计模式为什么要用单例模式 顾名思义，整个运行时区域，一个类只有一个实例对象 有的类的实例对象创建和销毁对资源来说消耗不大，比如String等 有的类比较庞大和复杂，如果频繁的创建和销毁对象，并且这些对象可以完全复用，那么就会造成一些不必要的性能浪费 比如访问数据库 创建数据库链接对象是一个耗资源的操作 但是数据库链接完全是可以复用的，那么可以将这个对象设计成单例，这样只需要创建一次重复使用就">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单例模式和类加载">
+<meta property="og:url" content="https://xuxin923992491.github.io/2021/07/20/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD/index.html">
+<meta property="og:site_name" content="努力努力再努力">
+<meta property="og:description" content="单例设计模式为什么要用单例模式 顾名思义，整个运行时区域，一个类只有一个实例对象 有的类的实例对象创建和销毁对资源来说消耗不大，比如String等 有的类比较庞大和复杂，如果频繁的创建和销毁对象，并且这些对象可以完全复用，那么就会造成一些不必要的性能浪费 比如访问数据库 创建数据库链接对象是一个耗资源的操作 但是数据库链接完全是可以复用的，那么可以将这个对象设计成单例，这样只需要创建一次重复使用就">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg">
+<meta property="article:published_time" content="2021-07-19T16:19:51.725Z">
+<meta property="article:modified_time" content="2021-07-19T16:18:58.209Z">
+<meta property="article:author" content="xuxin923992491">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://xuxin923992491.github.io/2021/07/20/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-07-20 00:18:58'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/null" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">14</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">努力努力再努力</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">单例模式和类加载</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-07-19T16:19:51.725Z" title="Created 2021-07-20 00:19:51">2021-07-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-07-19T16:18:58.209Z" title="Updated 2021-07-20 00:18:58">2021-07-20</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="单例设计模式"><a href="#单例设计模式" class="headerlink" title="单例设计模式"></a>单例设计模式</h1><h2 id="为什么要用单例模式"><a href="#为什么要用单例模式" class="headerlink" title="为什么要用单例模式"></a>为什么要用单例模式</h2><ul>
+<li>顾名思义，整个运行时区域，一个类只有一个实例对象</li>
+<li>有的类的实例对象创建和销毁对资源来说消耗不大，比如String等</li>
+<li>有的类比较庞大和复杂，如果频繁的创建和销毁对象，并且这些对象可以完全复用，那么就会造成一些不必要的性能浪费<ul>
+<li>比如访问数据库</li>
+<li>创建数据库链接对象是一个耗资源的操作</li>
+<li>但是数据库链接完全是可以复用的，那么可以将这个对象设计成单例，这样只需要创建一次重复使用就行了</li>
+<li>频繁的创建数据库链接对象非常耗性能的</li>
+</ul>
+</li>
+</ul>
+<h2 id="实现单例模式"><a href="#实现单例模式" class="headerlink" title="实现单例模式"></a>实现单例模式</h2><h3 id="单例模式实现思路"><a href="#单例模式实现思路" class="headerlink" title="单例模式实现思路"></a>单例模式实现思路</h3><ul>
+<li> 一个类能返回对象一个引用(永远是同一个)和一个获得该实例的方法（必须是静态方法，通常使用getInstance这个名 称）</li>
+<li>当我们调用这个方法时，如果类持有的引用不为空就返回这个引用，如果类保持的引用为空就创建该类的实例并将实例的引用赋予该类保持的引用</li>
+<li>同时我们还将该类的构造函数定义为私有方法，这样其他处的代码就无法通过调用该类的构造函数来实例化该类的对象，只有通过该类提供的静态方法来得到该类的唯一实例。 </li>
+</ul>
+<h3 id="饿汉式"><a href="#饿汉式" class="headerlink" title="饿汉式"></a>饿汉式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ImageLoader</span></span>&#123; </span><br><span class="line">     <span class="keyword">private</span> <span class="keyword">static</span> ImageLoader instance = <span class="keyword">new</span> ImageLoader(); </span><br><span class="line">     <span class="function"><span class="keyword">private</span> <span class="title">ImageLoader</span><span class="params">()</span></span>&#123;&#125; </span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ImageLoader <span class="title">getInstance</span><span class="params">()</span></span>&#123;  </span><br><span class="line">          <span class="keyword">return</span> instance;  </span><br><span class="line">      &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="实例什么时候被加载"><a href="#实例什么时候被加载" class="headerlink" title="实例什么时候被加载"></a>实例什么时候被加载</h4><ul>
+<li>实例在类初始化的时候会被创建，那么什么情况下触发类的初始化呢<ul>
+<li>当前类是启动类即main函数所在的类</li>
+<li>直接new该类的对象</li>
+<li>访问类的静态属性或者方法</li>
+<li>用反射访问类</li>
+<li>初始化一个类的子类</li>
+<li>…</li>
+</ul>
+</li>
+</ul>
+<h4 id="几点说明"><a href="#几点说明" class="headerlink" title="几点说明"></a>几点说明</h4><ul>
+<li>一上来就把单例对象创建出来了，要用的时候直接返回即可，这种可以说是单例模式中最简单的一种实现方式。</li>
+<li>但是问题也比较明显。单例在还没有使用到的时候，初始化就已经完成了，如JDK当中Runtime这个类就用了饿汉式</li>
+<li>也就是说，如果程序从头到尾都没用使用这个单例的话，单例的对象还是会创建。这就造成了不必要的资源浪费。</li>
+<li>所以不推荐这种实现方式，为了解决这个问题，就会引入懒汉式</li>
+</ul>
+<h3 id="懒汉式"><a href="#懒汉式" class="headerlink" title="懒汉式"></a>懒汉式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonDemo</span></span>&#123;</span><br><span class="line">     </span><br><span class="line">    <span class="comment">//类初始化时，不初始化这个对象(延时加载，真正用的时候再创建)</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> SingletonDemo instance;</span><br><span class="line">     </span><br><span class="line">    <span class="comment">//构造器私有化</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">SingletonDemo</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">     </span><br><span class="line">    <span class="comment">//方法同步，调用效率低</span></span><br><span class="line">    <span class="comment">//此时每次在获取对象的时候都要获取锁，我们真正需要的是</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> SingletonDemo <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(instance==<span class="keyword">null</span>)&#123;</span><br><span class="line">            instance=<span class="keyword">new</span> SingletonDemo();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="几点说明-1"><a href="#几点说明-1" class="headerlink" title="几点说明"></a>几点说明</h4><ul>
+<li>加锁是为了在多线程环境下，防止多个线程创建了多个对象，比如A，B都进入到了方法中，并且A，B同时判断了当前实例不存在，此时就会创建了两个实例，不符合单例</li>
+<li>在方法上加了synchronized，此时避免了上述情况，但是此时效率低下，因为每次要获取对象的时候都要先排队获取锁，即使这个对象已经创建好了还是要排队，因此需要需要降低锁的范围，让同步代码块仅涵盖判断锁是否存在的里面即可，即存在实例就返回，不存在再排队，保证只创建一次，因此引出了下面的单例模式写法</li>
+</ul>
+<h3 id="双重检验锁"><a href="#双重检验锁" class="headerlink" title="双重检验锁"></a>双重检验锁</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonDemo5</span> </span>&#123;</span><br><span class="line">    	<span class="comment">//volatile是重点，防止指令重排序，出现空实例</span></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> SingletonDemo5 SingletonDemo5;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="title">SingletonDemo5</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line">		</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> SingletonDemo5 <span class="title">newInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (SingletonDemo5 == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">//保证线程安全</span></span><br><span class="line">                <span class="keyword">synchronized</span> (SingletonDemo5.class) &#123;</span><br><span class="line">                    <span class="comment">//第二重检查锁</span></span><br><span class="line">                    <span class="keyword">if</span> (SingletonDemo5 == <span class="keyword">null</span>) &#123;</span><br><span class="line">                        SingletonDemo5 = <span class="keyword">new</span> SingletonDemo5();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> SingletonDemo5;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="几点说明-2"><a href="#几点说明-2" class="headerlink" title="几点说明"></a>几点说明</h4><ul>
+<li><p>首先是关于第二重检查锁的问题，这是由同步代码块引起的</p>
+<ul>
+<li>假设现在有A,B两个线程，A线程获得锁，进行实例化，B线程在等待锁，如果不加第二重锁会发生什么事情</li>
+<li>首先进入了第一重锁，保证的是判断是否需要创建实例</li>
+<li>那么进入代码块了就说明需要创建实例，当A在其中创建完实例后，释放锁，B拿到锁，如果不再判断一下的话，B也会创建对象，此时还是创建了两个对象</li>
+<li>如果加上了判断之后，如果创建过对象了，就不再创建了</li>
+</ul>
+</li>
+<li><p>对象被volatile修饰是重中之重，问题如下：</p>
+<ul>
+<li>现在有两个线程A和B，此时A线程已经进入到了代码块中，执行new操作，B线程刚刚执行到判断实例是否存在</li>
+<li>new实例对象的底层操作有三步<ol>
+<li>为对象分配内存并且给对象赋默认值</li>
+<li>将对象进行初始化</li>
+<li>将对象分配地址给栈，让引用指向该对象</li>
+</ol>
+</li>
+<li>问题的关键就在于上述的三个过程不是原子操作，正常执行顺序为1,2,3，但是CPU底层为了按照自己的想法进行代码优化，此时发生了指令重排序（按照的是happen-before原则重排序的，意思就是在不影响结果的情况下，可以按照效率高低交换执行顺序），此时执行顺序为132，也就是说先把对象给了引用，即此时实例对象不为null了，然后再初始化</li>
+<li>那么在进行完第三步和第二步中间的位置，B线程会判断实例是否为null，此时实例则不为null，那么就返回实例了，但是此时返回的实例确是未初始化的实例，对后续会产生很大的问题</li>
+<li>那么用volatile修饰就是能够防止指令重排序，这也是volatile的重要作用之一</li>
+</ul>
+</li>
+<li><p>以上便是懒汉式的最终写法</p>
+</li>
+</ul>
+<h4 id="懒汉式的好处"><a href="#懒汉式的好处" class="headerlink" title="懒汉式的好处"></a>懒汉式的好处</h4><ul>
+<li>有的对象构建开销比较大，加入这个对象在项目启动时候就构建，万一从来没有被调用过，那么就比较浪费了</li>
+<li>只有真正使用了采取创建是比较合理的</li>
+</ul>
+<h3 id="匿名内部类实现懒汉式"><a href="#匿名内部类实现懒汉式" class="headerlink" title="匿名内部类实现懒汉式"></a>匿名内部类实现懒汉式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonDemo3</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonClassInstance</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> SingletonDemo3 instance=<span class="keyword">new</span> SingletonDemo3();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">SingletonDemo3</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> SingletonDemo3 <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SingletonClassInstance.instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="几点说明-3"><a href="#几点说明-3" class="headerlink" title="几点说明"></a>几点说明</h4><ul>
+<li>对于上述双重检验锁的懒汉式，写起来比较麻烦，有没有既满足懒加载，又能满足线程安全，并且还能使用起来不那么复杂的方式呢</li>
+<li>使用静态内部类的方式便可以实现，因为静态内部类在启动的时候不会被加载，只有在第一次被调用（这里指的是对静态内部类类加载的触发）的时候才会被加载</li>
+<li>由于JDK类加载过程是线程安全的，因此这种方式既满足了延时，又满足了线程安全，同时效率也比之前的写法要高</li>
+</ul>
+<h3 id="枚举类单例"><a href="#枚举类单例" class="headerlink" title="枚举类单例"></a>枚举类单例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">SingletonDemo4</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//枚举元素本身就是单例</span></span><br><span class="line">    INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//添加自己需要的操作</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">singletonOperation</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="几点说明-4"><a href="#几点说明-4" class="headerlink" title="几点说明"></a>几点说明</h4><ul>
+<li>通过SingletonDemo4.INSTANCE就能创建出单例对象，这个对象就能够调用枚举类中的方法</li>
+<li>枚举类单例是属于饿汉式的，类加载的时候就被创建</li>
+</ul>
+<h2 id="以上单例模式如何选用"><a href="#以上单例模式如何选用" class="headerlink" title="以上单例模式如何选用"></a>以上单例模式如何选用</h2><ul>
+<li>其实不同的单例模式的写法都有在使用，没有说固定的用法，看实际业务，但是通常来说也有一些选用认知</li>
+<li>单例对象占用资源少，不需要延时加载，枚举好于饿汉</li>
+<li>单例对象占用资源多，需要延时加载，静态内部类好于懒汉式</li>
+<li>单例模式最好以工具类的形式进行提供，防止创建的单例对象的属性值被修改</li>
+</ul>
+<h2 id="单例模式的优缺点"><a href="#单例模式的优缺点" class="headerlink" title="单例模式的优缺点"></a>单例模式的优缺点</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>由于在系统内存中只存在一个对象，因此可以 节约系统资源，当 需要频繁创建和销毁的对象时单例模式无疑可以提高系统的性能。 </li>
+<li>避免对共享资源的多重占用。</li>
+</ul>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
+<li>不适用于变化的对象，如果同一类型的对象总是要在不同的用例场景发生变化，单例就会引起数据的错误，不能保存彼此的状态。 </li>
+<li>滥用单例将带来一些负面问题，如为了节省资源将数据库连接池对象设计为的单例类，可能会导致共享连接池对象的程序过多而出现连接池溢出</li>
+<li>如果实例化的对象长时间不被利用，系统会认为是垃圾而被回收，这将导致对象状态的丢失。 </li>
+</ul>
+<h1 id="类加载过程"><a href="#类加载过程" class="headerlink" title="类加载过程"></a>类加载过程</h1><h2 id="类的生命周期"><a href="#类的生命周期" class="headerlink" title="类的生命周期"></a>类的生命周期</h2><p> 加载、验证、准备、初始化和卸载这五个阶段的顺序是确定的，类的加载过程必须按照这种顺序按部就班的“开始”</p>
+<h3 id="加载阶段"><a href="#加载阶段" class="headerlink" title="加载阶段"></a>加载阶段</h3><p>加载阶段，主要完成一下三个任务：</p>
+<ul>
+<li>通过一个类的全限制名来获取.class的二进制字节流。</li>
+<li>将这个字节流转化为存储在方法区中的类结构。</li>
+<li>在堆内存中生成这个类的java.lang.Class对象，作为访问方法区中类结构的入口。</li>
+</ul>
+<h3 id="连接阶段"><a href="#连接阶段" class="headerlink" title="连接阶段"></a>连接阶段</h3><h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><p>用于确保加载类的正确性，包括文件格式验证、元数据验证码、字节码验证和符号引用验证；验证时很重要但不必须的，可以用-Xverifynone参数关闭大部分验证，以缩短加载时间。</p>
+<h4 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h4><p>为类的静态变量分配内存，并将其初始化为默认值，这些内存都在方法区中分配</p>
+<ul>
+<li>这个阶段初始化的是类变量，不包括实例变量，实例变量是在对象实例化时和对象一块在堆内存中分配的。</li>
+<li>这里的初始化的默认值是数据类型的零值（0，false，null等），而不是java代码中显示指定的值。</li>
+<li>如果字段是常量（即被static和final修饰），那么在该阶段该字段会被初始化为java代码中指定的值。</li>
+</ul>
+<h4 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h4><p>解析阶段是虚拟机将常量池内的符号引用替换为直接引用的过程，解析动作主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符7类符号引用进行。符号引用就是一组符号来描述目标，可以是任何字面量；直接引用就是直接指向目标的指针、相对偏移量或一个间接定位到目标的句柄。</p>
+<h3 id="初始化阶段"><a href="#初始化阶段" class="headerlink" title="初始化阶段"></a>初始化阶段</h3><ul>
+<li>初始化阶段是执行类构造器 &lt; clinit&gt; ()方法的过程。&lt; clinit&gt;()方法是由编译器自动收集类中的所有类变量的赋值动作和静态语句块(static{}块)中的语句合并产生的。通过以上收集对类初始化，还根据java中指定的值对类变量（静态变量）初始化。</li>
+<li>初始化阶段将会对static修饰变量或者静态代码块从上到下按照顺序去执行</li>
+<li>调用静态常量过程不会触发类加载过程</li>
+</ul>
+<h1 id="对象实例化"><a href="#对象实例化" class="headerlink" title="对象实例化"></a>对象实例化</h1><h2 id="流程（new的过程）"><a href="#流程（new的过程）" class="headerlink" title="流程（new的过程）"></a>流程（new的过程）</h2><h3 id="加载类过程"><a href="#加载类过程" class="headerlink" title="加载类过程"></a>加载类过程</h3><ul>
+<li>对象实例化会触发类加载</li>
+<li>加载过程中会经历整个类加载的过程</li>
+<li>类加载完成后，就要开始new对象，注意，new对象就是使用构造方法创建对象，每次使用构造方法，就是调用一次&lt; init&gt;方法，通过反编译也能够发现，任何对象的创建的时候，会有调用Object的init方法，因此也就说明任何类都继承Object类</li>
+</ul>
+<h3 id="在堆内存为对象分配空间"><a href="#在堆内存为对象分配空间" class="headerlink" title="在堆内存为对象分配空间"></a>在堆内存为对象分配空间</h3><ul>
+<li>在堆内存中为对象开辟一个空间</li>
+<li>开辟空间后，执行init方法，init方法由实例变量赋值语句，实例代码块，构造方法结合而成</li>
+<li>开辟空间后为实例变量赋默认值</li>
+</ul>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><ul>
+<li>开辟空间赋默认值之后，就会从上到下执行实例代码，包括给实例变量赋值，执行实例代码块等</li>
+</ul>
+<h3 id="执行构造方法"><a href="#执行构造方法" class="headerlink" title="执行构造方法"></a>执行构造方法</h3><h3 id="最后将对象作为引用赋值给局部变量"><a href="#最后将对象作为引用赋值给局部变量" class="headerlink" title="最后将对象作为引用赋值给局部变量"></a>最后将对象作为引用赋值给局部变量</h3></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">xuxin923992491</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://xuxin923992491.github.io/2021/07/20/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD/">https://xuxin923992491.github.io/2021/07/20/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/07/18/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E2%80%94%E2%80%94Redis%E5%92%8CZookeeper/"><img class="next-cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">分布式锁——Redis和Zookeeper</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/null" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">xuxin923992491</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">14</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%95%E4%BE%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">单例设计模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text">为什么要用单例模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">实现单例模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF"><span class="toc-number">1.2.1.</span> <span class="toc-text">单例模式实现思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A5%BF%E6%B1%89%E5%BC%8F"><span class="toc-number">1.2.2.</span> <span class="toc-text">饿汉式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%A2%AB%E5%8A%A0%E8%BD%BD"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">实例什么时候被加载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%A0%E7%82%B9%E8%AF%B4%E6%98%8E"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">几点说明</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%87%92%E6%B1%89%E5%BC%8F"><span class="toc-number">1.2.3.</span> <span class="toc-text">懒汉式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%A0%E7%82%B9%E8%AF%B4%E6%98%8E-1"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">几点说明</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8C%E9%87%8D%E6%A3%80%E9%AA%8C%E9%94%81"><span class="toc-number">1.2.4.</span> <span class="toc-text">双重检验锁</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%A0%E7%82%B9%E8%AF%B4%E6%98%8E-2"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">几点说明</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%87%92%E6%B1%89%E5%BC%8F%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">懒汉式的好处</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%BF%E5%90%8D%E5%86%85%E9%83%A8%E7%B1%BB%E5%AE%9E%E7%8E%B0%E6%87%92%E6%B1%89%E5%BC%8F"><span class="toc-number">1.2.5.</span> <span class="toc-text">匿名内部类实现懒汉式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%A0%E7%82%B9%E8%AF%B4%E6%98%8E-3"><span class="toc-number">1.2.5.1.</span> <span class="toc-text">几点说明</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%9A%E4%B8%BE%E7%B1%BB%E5%8D%95%E4%BE%8B"><span class="toc-number">1.2.6.</span> <span class="toc-text">枚举类单例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%A0%E7%82%B9%E8%AF%B4%E6%98%8E-4"><span class="toc-number">1.2.6.1.</span> <span class="toc-text">几点说明</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A5%E4%B8%8A%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%A6%82%E4%BD%95%E9%80%89%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">以上单例模式如何选用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.4.</span> <span class="toc-text">单例模式的优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">1.4.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9"><span class="toc-number">1.4.2.</span> <span class="toc-text">缺点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">类加载过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">2.1.</span> <span class="toc-text">类的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E9%98%B6%E6%AE%B5"><span class="toc-number">2.1.1.</span> <span class="toc-text">加载阶段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E9%98%B6%E6%AE%B5"><span class="toc-number">2.1.2.</span> <span class="toc-text">连接阶段</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81"><span class="toc-number">2.1.2.1.</span> <span class="toc-text">验证</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%86%E5%A4%87"><span class="toc-number">2.1.2.2.</span> <span class="toc-text">准备</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90"><span class="toc-number">2.1.2.3.</span> <span class="toc-text">解析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%98%B6%E6%AE%B5"><span class="toc-number">2.1.3.</span> <span class="toc-text">初始化阶段</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96"><span class="toc-number">3.</span> <span class="toc-text">对象实例化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B%EF%BC%88new%E7%9A%84%E8%BF%87%E7%A8%8B%EF%BC%89"><span class="toc-number">3.1.</span> <span class="toc-text">流程（new的过程）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E7%B1%BB%E8%BF%87%E7%A8%8B"><span class="toc-number">3.1.1.</span> <span class="toc-text">加载类过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E5%A0%86%E5%86%85%E5%AD%98%E4%B8%BA%E5%AF%B9%E8%B1%A1%E5%88%86%E9%85%8D%E7%A9%BA%E9%97%B4"><span class="toc-number">3.1.2.</span> <span class="toc-text">在堆内存为对象分配空间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">3.1.3.</span> <span class="toc-text">初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="toc-number">3.1.4.</span> <span class="toc-text">执行构造方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%E5%B0%86%E5%AF%B9%E8%B1%A1%E4%BD%9C%E4%B8%BA%E5%BC%95%E7%94%A8%E8%B5%8B%E5%80%BC%E7%BB%99%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="toc-number">3.1.5.</span> <span class="toc-text">最后将对象作为引用赋值给局部变量</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/07/20/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD/" title="单例模式和类加载"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="单例模式和类加载"/></a><div class="content"><a class="title" href="/2021/07/20/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%92%8C%E7%B1%BB%E5%8A%A0%E8%BD%BD/" title="单例模式和类加载">单例模式和类加载</a><time datetime="2021-07-19T16:19:51.725Z" title="Created 2021-07-20 00:19:51">2021-07-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/07/18/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E2%80%94%E2%80%94Redis%E5%92%8CZookeeper/" title="分布式锁——Redis和Zookeeper"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分布式锁——Redis和Zookeeper"/></a><div class="content"><a class="title" href="/2021/07/18/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E2%80%94%E2%80%94Redis%E5%92%8CZookeeper/" title="分布式锁——Redis和Zookeeper">分布式锁——Redis和Zookeeper</a><time datetime="2021-07-18T15:06:28.429Z" title="Created 2021-07-18 23:06:28">2021-07-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/07/18/Redis%E4%B8%93%E9%A2%98%E2%80%94%E2%80%94%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/" title="Redis专题——安全问题"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis专题——安全问题"/></a><div class="content"><a class="title" href="/2021/07/18/Redis%E4%B8%93%E9%A2%98%E2%80%94%E2%80%94%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98/" title="Redis专题——安全问题">Redis专题——安全问题</a><time datetime="2021-07-18T13:53:55.525Z" title="Created 2021-07-18 21:53:55">2021-07-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/07/18/Redis%E4%B8%93%E9%A2%98%E2%80%94%E2%80%94%E6%8C%81%E4%B9%85%E5%8C%96/" title="Redis专题——持久化"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis专题——持久化"/></a><div class="content"><a class="title" href="/2021/07/18/Redis%E4%B8%93%E9%A2%98%E2%80%94%E2%80%94%E6%8C%81%E4%B9%85%E5%8C%96/" title="Redis专题——持久化">Redis专题——持久化</a><time datetime="2021-07-18T01:38:46.795Z" title="Created 2021-07-18 09:38:46">2021-07-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/07/18/Redis%E4%B8%93%E9%A2%98%E2%80%94%E2%80%94%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" title="Redis专题——内存结构"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis专题——内存结构"/></a><div class="content"><a class="title" href="/2021/07/18/Redis%E4%B8%93%E9%A2%98%E2%80%94%E2%80%94%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" title="Redis专题——内存结构">Redis专题——内存结构</a><time datetime="2021-07-18T01:38:46.793Z" title="Created 2021-07-18 09:38:46">2021-07-18</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By xuxin923992491</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
